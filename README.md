@@ -187,6 +187,16 @@ git pull upstream main && uv sync     # preflight warns you when you're behind
 The pull brings new skills and a possibly-updated explorer version; `uv sync`
 installs it. Preflight verifies the two match.
 
+**If the pull stops with a conflict in `pyproject.toml` / `uv.lock`** (it will if
+you added a package yourself, e.g. with `uv add`): in `pyproject.toml`, keep
+**both** lists of dependencies (delete only the `<<<<<<<`, `=======` and
+`>>>>>>>` marker lines), then regenerate the lock file instead of merging it:
+
+```bash
+git checkout --theirs uv.lock && uv lock && uv sync
+git add pyproject.toml uv.lock && git commit --no-edit
+```
+
 ---
 
 **Connection specifics** — the lab Bolt URI, firewall/subnet checks, and

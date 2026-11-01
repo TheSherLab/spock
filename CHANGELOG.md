@@ -32,7 +32,8 @@ clones should repoint anyway:
 `origin`, if you cloned the template directly). The project name in
 `pyproject.toml` is now `spock`.
 
-**Ships with explorer `v0.1.0-alpha.6` and KG `0.1.0-alpha.8`.** Run `uv sync`
+**Ships with explorer `v0.1.0-alpha.6`, for KG `0.1.0-alpha.8` or later** (alpha.9
+adds only release notifications). Run `uv sync`
 after pulling. The KG's `mcp_min_version` is now `0.1.0a6`, so an older explorer
 fails preflight's contract check. Scripts written against explorer alpha.5 can
 break or silently change results. The explorer's own release notes have the
