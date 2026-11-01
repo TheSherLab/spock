@@ -1,6 +1,7 @@
 # Critical reviewer — subagent prompt template
 
-Fill the placeholders and dispatch as a `general-purpose` subagent. The text
+Fill the placeholders and dispatch as the template's `critic` agent
+(`.claude/agents/critic.md`; fall back to `general-purpose` if it isn't loaded). The text
 below is the subagent's entire instruction. It must NOT be given your session
 history — a cold read is the point.
 
@@ -62,6 +63,9 @@ checks — those are the author's decide-gate checklist, not your job.
   direction is unreadable.
 - Duplicate / pooled rows double-counted — the same gene appearing in both a
   per-timepoint slice and a pooled slice, summed as if distinct.
+- Report and paper vs data — do the numbers in `report.html`'s findings table
+  and in `paper.md`'s section for this milestone match the `data/` files and
+  `notebook.md`?
 - Source tagging — is every number traced to a script or KG call? Is intrinsic
   ("training knowledge") reasoning labelled, or smuggled in as data?
 - Tool/citation/field claims from memory — capabilities, authors, or field
@@ -79,6 +83,12 @@ checks — those are the author's decide-gate checklist, not your job.
 - Confounders — platform, medium, timepoint, batch, strain, baseline. Is a
   claimed biological effect separable from a technical one? Is a per-arm contrast
   silently treated as a between-arm one?
+- Design comparability — for each experiment used: what is each arm compared
+  against, and what physiological state was that reference in (growth phase,
+  nutrient status, sampling day)? Do contrasts that are treated as independent
+  evidence share samples or one fitted model? Is an experiment asked to confirm
+  something its design cannot? Does a comparison mix layers (RNA vs protein) or
+  platforms (microarray vs RNA-seq) without saying so?
 - Alternative explanations — for each headline claim, what else could produce
   this pattern? Is the simplest alternative ruled out or ignored?
 - Strength of language vs evidence — confident wording on weak or absent
@@ -136,3 +146,8 @@ Recommendation: <the smallest change that fixes it, or "verify X">
 End with a one-paragraph **verdict**: the most important thing to fix before the
 decide gate, and whether you found any Blockers. If a dimension in the lens came
 back clean, say so.
+
+Write in plain language: numbers and direction first, no jargon you don't
+define. Recommend the smallest fix that makes a claim honest — a caveat in its
+own sentence or section, not a rewrite that folds every caveat into the headline.
+A finding that makes the conclusion unreadable has not made it more correct.

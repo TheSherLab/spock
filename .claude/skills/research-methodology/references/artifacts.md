@@ -32,7 +32,7 @@ Simple lookups stay in chat:
 
 ```
 analyses/<slug>/
-  paper.md                  # academic-style writeup, grows across the arc
+  paper.md                  # paper-ready writeup (drops into a manuscript), grows across the arc
   gaps_and_friction.md      # transitional — methodology/KG/tooling friction log
   .gitignore                # per-analysis, created at scaffolding
   proposal.md               # question + KG entries + enumerated framing (the plan)
@@ -40,12 +40,13 @@ analyses/<slug>/
   proposal_critical_review.md   # only when the proposal critic found something
   methods/
     notebook.md
+    report.html             # self-contained milestone report, rebuilt from data/
     <module_name>.py        # ad-hoc methods module
     scripts/, data/, figures/
   analysis/
-    notebook.md, scripts/, data/, figures/
+    notebook.md, report.html, scripts/, data/, figures/
   evaluation/
-    notebook.md, scripts/, data/, figures/
+    notebook.md, report.html, scripts/, data/, figures/
 ```
 
 **Slug format:** `YYYY-MM-DD-<descriptor>` where descriptor is snake_case, 2–4 words reflecting the research question (e.g., `2026-04-23-n_limitation_signature`). Same-day collisions: append a letter suffix (`-a`, `-b`).
@@ -78,7 +79,8 @@ Each Run-milestone folder contains:
 - **`notebook.md`** — narrative + decide-gate checklist, owned by the main thread (see [research-notebook.md](research-notebook.md))
 - **`scripts/`** — Python scripts that do the milestone's work (authored by the coding subagent)
 - **`data/`** — script outputs (CSV/TSV); inputs from prior milestones referenced by relative path
-- **`figures/`** — PNG/PDF/SVG outputs
+- **`figures/`** — static PNG/SVG outputs, made with the `dataviz` skill (see [figures-and-reports.md](figures-and-reports.md))
+- **`report.html`** — the milestone report: one self-contained page (findings, figures with hover where it helps, sortable tables), built by `scripts/build_report.py` from `data/` (see [figures-and-reports.md](figures-and-reports.md#the-milestone-report--reporthtml))
 - **`critical_review.md`** — at the analysis and evaluation milestones, at a methods milestone that emits a data artifact, and after a delta pass; **only when the critic found something**: its findings plus the author's disposition for each (a clean review is a one-line note in `notebook.md`, not a file). See the `critical-review` skill and [step-protocol.md GATE C](step-protocol.md)
 
 The Plan phase has no folder — it produces `proposal.md` + `proposal_notebook.md` at the analysis root (plus `proposal_critical_review.md` when the proposal critic found something), because it is a conversation, not a computation.
@@ -108,7 +110,7 @@ Scripts must be:
 ## paper.md and gaps_and_friction.md
 
 Both live at the analysis root. Content rules are in [research-notebook.md](research-notebook.md):
-- `paper.md` — academic-style writeup, skeleton sections from day 1, populated at the Plan commit and each milestone's decide phase
+- `paper.md` — paper-ready writeup for the eventual paper's reader (no internal vocabulary or file paths), skeleton sections from day 1, populated at the Plan commit and each milestone's decide phase
 - `gaps_and_friction.md` — transitional friction log, distinct from decisions (which live in milestone notebooks or `proposal.md`)
 
 ## Data and figure conventions
@@ -120,8 +122,9 @@ Both live at the analysis root. Content rules are in [research-notebook.md](rese
 - Name descriptively: `de_genes_med4_nitrogen.csv`, not `output.csv`
 
 ### figures/
+- Made with the `dataviz` skill, using the template's colour parameters and figure conventions in [figures-and-reports.md](figures-and-reports.md) (orange = up, blue = down; a colorbar on every heatmap)
 - PNG at 300 DPI minimum for notebook inclusion
-- PDF or SVG for publication-ready figures
+- SVG (or PDF) for publication-ready figures
 - Axis labels, legends, and titles mandatory
 
 ## Git tracking
@@ -165,6 +168,6 @@ Scripts with `--explore` or `--verbose` flags should write their diagnostic outp
 
 ## References
 
-References (publications cited in the analysis) live in **`paper.md`'s References section**, not a separate file. Every reference must be resolved through `list_publications` and cited by DOI or KG experiment ID — never from intrinsic knowledge (see [anti-hallucination.md — Category 5.2](anti-hallucination.md#52-publication-attribution-from-training-knowledge)).
+References (publications cited in the analysis) live in **`paper.md`'s References section**, not a separate file. Every reference must be resolved through `list_publications` and cited by DOI — never from intrinsic knowledge (see [anti-hallucination.md — Category 5.2](anti-hallucination.md#52-publication-attribution-from-training-knowledge)).
 
 KG version, tool versions, statistical software, and Python package versions go in `paper.md`'s Methods section.

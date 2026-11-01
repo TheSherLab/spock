@@ -59,6 +59,12 @@ and exploration logs go to disk.
 See [Artifacts guide](references/artifacts.md) for directory structure,
 exploration log format, and file naming conventions.
 
+**Figures use the `dataviz` skill — load it before the first line of plotting
+code**, with the template's colour parameters (orange = up, blue = down) and
+figure conventions. Each Run milestone ends with a self-contained
+`report.html` the researcher can explore — interactive where hover, sort or
+filter helps. See [Figures and reports](references/figures-and-reports.md).
+
 ## Rule 5: Scripts over chat reasoning
 
 Chat-computed statistics are unreproducible — they can't be rerun,
@@ -119,7 +125,9 @@ don't provide.
 The Plan phase is one grounded brainstorming conversation that
 converges on a single **`proposal.md`** at the analysis root:
 
-- **Question** — the locked research question
+- **Question** — the locked research question, and what it is for: a
+  standalone result or part of a paper (or a rewrite of one), and whose
+  hypothesis it is — ask; it changes who is anchored to the answer
 - **KG entries** — the publications, experiments, organisms, and data
   types that bear on it, *enumerated from the KG, not memory*
 - **Framing** — stated concretely (see below)
@@ -137,11 +145,17 @@ milestones and is the most expensive to unwind — so the Plan phase
 closes on a review, in order: (1) **self-review** — read `proposal.md`
 with fresh eyes for vagueness, a missing stats decision, an
 unnamed/uncheckable validation set, a missing falsifiability check /
-expected-negative, or contradiction, and fix inline;
+expected-negative, a missing design-comparability row, or
+contradiction, and fix inline;
 (2) **critical review** — the fresh-context critic runs on every
 proposal, interpretation-only (no data yet), via the `critical-review`
-skill; (3) **researcher approval** — present the proposal and the
-critic's findings, and begin the Run phase only on approval. See
+skill; (3) **design review with the researcher** — not a sign-off: the
+researcher's design thinking happens here, so present a short list of
+the open design choices, each with your recommendation and the critic
+findings that bear on it, and expect changes; (4) **delta critic pass**
+over whatever the design review changed, then back to (3) until the
+researcher approves with no further change. Begin the Run phase only
+then. See
 [step-protocol.md — The Plan phase](references/step-protocol.md).
 
 **Framing is enumerated, not sketched.** The recurring failure is a
@@ -167,6 +181,23 @@ time*. Every framing states, specifically:
   noise result are indistinguishable, and a negative finding cannot be
   trusted. A null is a valid outcome; the evaluation milestone writes it
   up as a bounded negative, not a non-result.
+- **Design comparability** — per experiment used: its role; what each
+  arm is compared against and that reference sample's physiological
+  state (growth phase, nutrient status, sampling day); whether contrasts
+  share samples or one fitted model; and what it can and cannot confirm.
+  The KG doesn't hold every culture state — **ask the researcher**. A
+  comparable metric over incomparable designs is the recurring hole
+  (an FDR family size, then a late-decline "early" reference and
+  contrasts that were one fitted model).
+
+**Say what the methods milestone is.** If the method *builds* the
+entity set (transport systems, a candidate list, tiers, classes), the
+methods milestone is a **discovery milestone**: plan for many decisions
+at its decide gate and for four verification layers instead of one
+spot-run — real-format fixtures, a pilot against an independent
+MCP-only answer key, an API-usage review, and a random sample of every
+bin before its rule is approved. See
+[research-notebook.md — Phase 1](references/research-notebook.md#phase-1--analysis-code-methodology-first).
 
 **Two principles, working together.** *Just-in-time* governs **what**
 the plan commits to — only what the data so far supports; no
@@ -233,7 +264,9 @@ being committed as findings.
 thread.** The KG queries and script iterations that make up *do* and
 *show* generate a lot of noise. Run them in a coding subagent
 (`superpowers:subagent-driven-development`) so the researcher-facing
-thread keeps only the artifacts and the decisions. The subagent writes
+thread keeps only the artifacts and the decisions. Use the template's
+**`kg-coder`** agent, which preloads this skill and `dataviz`, and
+continue it with `SendMessage` across the milestone. The subagent writes
 and runs the scripts, queries the KG, and produces the tables and
 figures; it is re-invoked for each exploration question as it arises.
 Two rules keep this from quietly breaking the skill's guarantees:
@@ -273,9 +306,14 @@ where the researcher is. See
   and must be paired with a short readable name in the same paragraph
 - **`proposal.md` + per-milestone `notebook.md` + single `paper.md`**
   at the analysis root replace the single exploration notebook +
-  methods.md + caveats.md
+  methods.md + caveats.md. `paper.md` is written for the paper's
+  reader — journal prose that drops into a manuscript, with no internal
+  vocabulary, file paths or process history; its conclusion opens with
+  a findings table and numbered meanings, caveats in their own section
 - **`gaps_and_friction.md`** (transitional) captures methodology / KG /
-  tooling friction, distinct from decisions
+  tooling friction — and what worked — each entry type-tagged
+  (`[pitfall]`, `[bkm]`, `[kg-gap]`, `[tool]`, `[method-gap]`), distinct
+  from decisions
 
 See [Step protocol](references/step-protocol.md) for commit timing,
 decide-gate checklist, hard gates, and redo path. See
@@ -329,6 +367,7 @@ See [Anti-hallucination — 2.6 Emotive vocabulary and speculative proposals](re
 - [Step protocol](references/step-protocol.md) — read at the start of every analysis execution; owns commit timing, decide-gate checklist, hard gates, redo path
 - [Research notebook](references/research-notebook.md) — read when starting or resuming an analysis; owns notebook format, paper.md growth, gaps_and_friction.md, brainstorming override for the Plan phase
 - [Artifacts guide](references/artifacts.md) — read at scaffold time or when unsure about directory structure, per-milestone folders, QC naming
+- [Figures and reports](references/figures-and-reports.md) — read before making any figure or a milestone's `report.html`; owns the colour parameters, figure conventions, and report contents
 - [Anti-hallucination](references/anti-hallucination.md) — read before presenting findings; covers tool-schema claims, publication attribution, field semantics, and the other anti-hallucination patterns
 - [KG rules](references/kg-rules.md) — read when scoping a new analysis or uncertain about data sourcing vs literature
 - [Gene identity](references/gene-identity.md) — read when working with gene names, paralogs, or orthologs

@@ -18,6 +18,7 @@ The **just-in-time formalization** principle applies throughout: terms, metrics,
 **Run milestone commit:**
 - `notebook.md` (narrative + decide-gate checklist)
 - `scripts/`, `data/`, `figures/` (main + `qc_*` files)
+- `report.html` (the milestone report, rebuilt from `data/`)
 - updates to `paper.md` (the milestone's synthesis section)
 - updates to `gaps_and_friction.md` (if the milestone encountered friction)
 - `critical_review.md` where the critic found something (analysis + evaluation milestones; methods when it emits a data artifact; any delta pass)
@@ -28,13 +29,16 @@ No mid-milestone commits. The decide phase is the atomic milestone boundary.
 
 The Plan phase is one grounded `superpowers:brainstorming` conversation (three overrides — see [research-notebook.md — Using brainstorming for the Plan phase](research-notebook.md)). The output is `proposal.md` plus its brainstorming record, committed once.
 
-**Framing is enumerated.** The proposal's framing states, concretely: hypothesis; approach (how and why, not code); a deliberate statistics decision (the specific test and thresholds, or an explicit reasoned "none"); a named validation set (the genes/pathways whose behavior is already known, with the behavior expected if the method works); and a falsifiability check (the result that would say the method found nothing real, plus a pre-registered expected-negative class that should *not* score). See [research-notebook.md](research-notebook.md#just-in-time-formalization) for the floor.
+**Framing is enumerated.** The proposal's framing states, concretely: hypothesis; approach (how and why, not code); a deliberate statistics decision (the specific test and thresholds, or an explicit reasoned "none"); a named validation set (the genes/pathways whose behavior is already known, with the behavior expected if the method works); a falsifiability check (the result that would say the method found nothing real, plus a pre-registered expected-negative class that should *not* score); and design comparability (per experiment: its role, what each arm is compared against and that reference's physiological state, whether contrasts share samples or a fitted model, and what it can and cannot confirm — asking the researcher for culture states the KG doesn't hold). See [research-notebook.md](research-notebook.md#just-in-time-formalization) for the floor. The proposal also says what the result is for (standalone, or part of a paper) and whose hypothesis it is.
+
+**Plan the methods milestone by what it produces.** If the method constructs the entity set (a parts list, candidate set, tiers, classes), say so in the proposal: it is a discovery milestone, with many decisions at its decide gate and the four verification layers in [research-notebook.md — Phase 1](research-notebook.md#phase-1--analysis-code-methodology-first).
 
 **Close gate — review the proposal before execution.** The proposal is the highest-leverage artifact; a flaw in it propagates through all three Run milestones and is the most expensive to unwind. Before the Run phase begins, in order:
 
-1. **Self-review** — read `proposal.md` with fresh eyes: is the framing enumerated (stats decision actually made, validation set named and checkable, falsifiability check + expected-negative named)? any vagueness, placeholder, or internal contradiction? Fix inline. This is the direct catch for the vague-plan-that-forces-a-redo failure.
+1. **Self-review** — read `proposal.md` with fresh eyes: is the framing enumerated (stats decision actually made, validation set named and checkable, falsifiability check + expected-negative named, a design-comparability row per experiment)? any vagueness, placeholder, or internal contradiction? Fix inline. This is the direct catch for the vague-plan-that-forces-a-redo failure.
 2. **Critical review (automatic; interpretation only)** — dispatch the fresh-context critic via the `critical-review` skill over `proposal.md`. There is no data yet, so the lens is interpretation only (testability, controls, confounders, whether the statistics decision, validation set, and expected-negative fit the question). Findings + dispositions go to `proposal_critical_review.md`; a clean review is a one-line note in `proposal_notebook.md`. Resolve every Blocker before proceeding. See [GATE C](#gate-c-critical-review-before-a-claim-bearing-artifact-is-shown).
-3. **Researcher review and approval** — present `proposal.md`, the critic's findings (or clean note), and the `paper.md` Question + Background. The researcher approves or redirects. Only on approval does the Plan commit land and the Run phase begin.
+3. **Design review with the researcher** — this is where the researcher's design thinking happens, so expect changes rather than a sign-off. Present a **short list of the open design choices** (what is compared, how the set is defined, which controls, what is deferred), each with your recommendation and the critic's findings that bear on it; `proposal.md` and the `paper.md` Question + Background are there to read, not the thing presented. Fold in the researcher's changes.
+4. **Delta critic pass after changes** — if the design review changed the framing (it usually does), re-dispatch the critic over what changed, with the already-reviewed proposal as a trusted input. Repeat 3–4 until the researcher approves with no further design change. Only then does the Plan commit land and the Run phase begin. *(N-import coculture: four approval prompts in a row were answered with design input, growing the proposal from 205 to 330 lines; two scoped delta passes caught one Blocker and five Concerns in the additions.)*
 
 ## Before starting a Run milestone
 
@@ -51,6 +55,7 @@ The KG queries and script iterations of *do* and *show* run in a coding subagent
 - The subagent authors **scripts, data, figures, logs, and a factual run-manifest**. It does not conclude.
 - The main thread authors **`notebook.md`, `paper.md`, `gaps_and_friction.md`, critical-review dispositions, and the decide-gate checklist** — pasting the subagent's run-manifest verbatim into the mechanical notebook sections and writing every interpretive section itself.
 - Keep the **same subagent** alive across a milestone's invocations so the domain rules and analysis context persist.
+- Use the template's **`kg-coder`** agent (`.claude/agents/kg-coder.md`) for this role: it preloads `research-methodology` and `dataviz`, so the rules ride along by configuration. Continue it with `SendMessage` (by name or the agent ID it returned) for each new exploration question rather than spawning a fresh one; spawn a new one only if it has lost the thread.
 
 Where no subagents are available, the same work is done inline — same rules, same artifacts, same ownership.
 
@@ -64,9 +69,11 @@ This is the front-end mirror of the decide gate: decide closes a milestone with 
 
 The coding subagent does the milestone's work:
 
-- **methods:** implement the approach the proposal committed to as an ad-hoc Python module; verify against hand-computed toy data (`superpowers:test-driven-development`), with fixtures in the **real artifact's serialization form** and a main-thread spot-run on one real row — a green suite over the wrong input type is not evidence (see [research-notebook.md — Toy-data verification](research-notebook.md#phase-1--analysis-code-methodology-first))
+- **methods:** implement the approach the proposal committed to as an ad-hoc Python module; verify against hand-computed toy data (`superpowers:test-driven-development`), with fixtures in the **real artifact's serialization form** and a main-thread spot-run on one real row — a green suite over the wrong input type is not evidence. When the method **constructs the entity set**, the spot-run is replaced by four layers before scaling: real-serialization fixtures → a pilot against an independent MCP-only answer key → an API-usage review against the explorer's source and docs → a random sample of each bin before any tier or class rule is approved (see [research-notebook.md — Phase 1](research-notebook.md#phase-1--analysis-code-methodology-first))
 - **analysis:** run the method; produce scored outputs, figures, tables
 - **evaluation:** assess results against the framing; QC scripts for sensitivity/stability where a result triggers them
+
+Every figure is made with the `dataviz` skill and the template's colour parameters, and every milestone ends with a self-contained `report.html` built from its `data/` (see [figures-and-reports.md](figures-and-reports.md)).
 
 Outputs land where they naturally belong: scripts in `scripts/`, their outputs in `data/` and `figures/`. QC artifacts use the `qc_` prefix (see [artifacts.md](artifacts.md)). No commit yet — outputs are uncommitted working-tree state until decide.
 
@@ -82,7 +89,7 @@ Summary tables in **Results** are the same tables presented to the researcher in
 
 ## "explore" phase (Run milestones)
 
-Investigate anomalies, surprises, or gaps. Each exploration question is a fresh invocation of the coding subagent, which returns the artifact that answers it; the main thread and researcher read it and interpret. Add `qc_*.py` checks; run sensitivity analyses; cross-validate against the validation set. Capture anomalies worth flagging as **Surprises** in `notebook.md`.
+Investigate anomalies, surprises, or gaps. Each exploration question is a new request to the same coding subagent (continued, not respawned), which returns the artifact that answers it; the main thread and researcher read it and interpret. Add `qc_*.py` checks; run sensitivity analyses; cross-validate against the validation set. Capture anomalies worth flagging as **Surprises** in `notebook.md`.
 
 **Exploration is expected to exceed the plan.** Findings you did not plan for are welcome — that is discovery, not scope drift — provided they still pass through the decide gate before being committed. If a researcher question produces a data point or changes interpretation, both the prose and the data live in the notebook; the narrative IS the exploration record.
 
@@ -98,7 +105,9 @@ Investigate anomalies, surprises, or gaps. Each exploration question is a fresh 
      - **Decisions made this milestone** — prose + date, if any; omit if none
      - **Advance rationale** — one line, why this milestone is ready to close
 
-2. **Update `paper.md`:** write the synthesis for the section this milestone populates — see [research-notebook.md — paper.md growth](research-notebook.md) for the section-to-milestone mapping.
+2. **Update `paper.md`:** write the synthesis for the section this milestone populates, as journal prose that drops into a manuscript as is — no internal vocabulary, file paths or process history; figures by number with captions; at evaluation, the Discussion opens with the findings table and numbered meanings. See [research-notebook.md — paper.md growth](research-notebook.md#papermd-growth-pattern).
+
+   **Build `report.html`:** rebuild the milestone report from `data/` (`scripts/build_report.py`), open it, and check its findings table against `notebook.md`. See [figures-and-reports.md](figures-and-reports.md#the-milestone-report--reporthtml).
 
 3. **Append to `gaps_and_friction.md`** if friction was encountered (KG issues, MCP schema mismatches, methodology gaps, anti-hallucination corrections). Two checks before moving on, both cheap:
    - **Every friction the notebook references has an entry.** If `notebook.md` says "see `gaps_and_friction.md`," the entry exists. A dangling pointer means the friction was noticed and lost.
@@ -106,7 +115,7 @@ Investigate anomalies, surprises, or gaps. Each exploration question is a fresh 
 
 4. **Critical review (analysis and evaluation — automatic; methods automatic when it emits a data artifact):** before presenting to the researcher, dispatch the fresh-context critic via the `critical-review` skill. It reviews **only this milestone's own files** (the proposal and earlier milestones are trusted inputs) with a lens matched to the milestone: **analysis** gets data-integrity + interpretation (the heavy gate, where computed results first appear); **evaluation** gets interpretation only (it judges whether conclusions are earned by the already-vetted analysis results); **methods** gets data-integrity + interpretation whenever it emits a data file that later milestones consume, and is on demand otherwise. Methodology compliance is not the critic's job — it lives in your decide-gate checklist. If the critic finds anything, write its findings and your disposition for each to `{MILESTONE}/critical_review.md` and resolve every Blocker (fix, or dispute with a specific data citation) before the milestone closes; if it comes back clean, add a one-line `Critical review: clean (<lens>)` to `notebook.md` and write no file. If the milestone's claims expand after the pass (explore runs after the critic by construction), re-dispatch over the delta with the already-reviewed files as trusted inputs before closing. See [GATE C](#gate-c-critical-review-before-a-claim-bearing-artifact-is-shown).
 
-5. **Present state to researcher:** show the `notebook.md` content, the `paper.md` diff, any `gaps_and_friction.md` additions, and — where the review produced findings — `critical_review.md` with your dispositions. Wait for explicit approval or redirect.
+5. **Present state to researcher:** point them at `report.html` first (it is how they look at the results), then show the `notebook.md` content, the `paper.md` diff, any `gaps_and_friction.md` additions, and — where the review produced findings — `critical_review.md` with your dispositions. Wait for explicit approval or redirect.
 
 6. **On approval, commit.** One commit, containing all of the milestone's changes.
 
@@ -152,7 +161,7 @@ Across analyses, wrong narratives survived because the author was anchored to th
 
 **Methods is not exempt because "it's only code."** When the method includes *constructing the entity set* — a parts list, a curated candidate set, a classification table — that file carries claims (substrate labels, confidence flags, class assignments) and every downstream score inherits them. A methods milestone whose only output is a toy-tested function stays on demand; one that hands the analysis milestone a table does not. *(Alteromonas coculture: the on-demand methods critic found a soluble PTS phosphocarrier sitting in the candidate set as a confident sugar importer, plus a `[KG]`-tagged carrier count 30% high that had already reached `paper.md`.)*
 
-**Re-review on expansion — expect it, don't treat it as an edge case.** The critic pass is point-in-time, and the **explore** phase runs *after* it by construction: researcher-requested follow-ons, new scripts, new figures and new conclusions routinely land during decide. If a milestone's claims **materially expand after its pass**, re-dispatch the critic over the delta before closing, listing the already-reviewed files as trusted inputs. A milestone that explores after its critic pass and closes without a delta pass is closing unreviewed work. *(Alteromonas coculture: the analysis critic came back clean on data integrity; the delta pass over the exploration that followed returned a Blocker — a figure caveat citing the wrong module's number, which had inverted its interpretation.)*
+**Re-review on expansion — expect it, don't treat it as an edge case.** The critic pass is point-in-time, and the **explore** phase runs *after* it by construction: researcher-requested follow-ons, new scripts, new figures and new conclusions routinely land during decide. If a milestone's claims **materially expand after its pass**, re-dispatch the critic over the delta before closing, listing the already-reviewed files as trusted inputs. A milestone that explores after its critic pass and closes without a delta pass is closing unreviewed work. **The same holds for the Plan phase:** the design review at its close routinely changes the framing after the proposal critic ran, so changes there get a scoped delta pass too. *(Alteromonas coculture: the analysis critic came back clean on data integrity; the delta pass over the exploration that followed returned a Blocker — a figure caveat citing the wrong module's number, which had inverted its interpretation.)*
 
 ### GATE D: Results presented, not paraphrased
 

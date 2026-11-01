@@ -57,11 +57,11 @@ You need the following installed once. The links go to official install
 instructions for Mac, Windows, and Linux:
 
 - **[VS Code](https://code.visualstudio.com/)** — the editor everything runs in
-- **[Claude Code](https://claude.com/claude-code)** — the AI assistant (added to VS Code)
+- **[Claude Code](https://claude.com/claude-code)** — the AI assistant (added to VS Code). Keep it current (`claude update`); the `dataviz` skill the figures rely on ships with Claude Code itself
 - **[git](https://git-scm.com/downloads)** — tracks and downloads your work
 - **[uv](https://docs.astral.sh/uv/)** — installs Python 3.11+ and the analysis tools for you
 - A free **[GitHub account](https://github.com/signup)** — to fork the template
-- **[jq](https://jqlang.github.io/jq/)** *(optional)* — only needed for usage logging; without it, logging is silently skipped
+- **[jq](https://jqlang.github.io/jq/)** *(recommended)* — needed for usage logging; without it, logging is skipped (preflight warns). Windows: `winget install jqlang.jq`, then restart VS Code
 
 > **New to the command line?** The steps below are commands you paste into a
 > terminal. VS Code has one built in: **View → Terminal**. Open this folder in
@@ -146,6 +146,19 @@ phase (question → KG entries → enumerated framing, converged into `proposal.
 and a **Run** phase (methods → analysis → evaluation). Everything Claude produces
 is saved under `analyses/` in **your** copy. Commit the `usage/` logs alongside
 your analysis commits (they help improve the tools).
+
+What you get back at each step:
+- **`report.html`** in each milestone folder — open it in a browser to explore the
+  results: figures you can hover over, tables you can sort and filter.
+- **`paper.md`** at the analysis root — written as paper text you can drop into a
+  manuscript's Methods, Results and Discussion.
+- **`gaps_and_friction.md`** — what went wrong and what worked. Please keep it
+  honest: it is the evidence for improving the method.
+
+> **Fewer permission prompts (optional).** Claude Code's *auto* permission mode
+> lets it run routine commands without asking each time. It is set per user, not
+> per repo: check your mode with `/status`, and see the Claude Code docs on
+> permission modes before turning it on.
 
 ---
 

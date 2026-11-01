@@ -406,8 +406,8 @@ Before presenting any finding, ask:
    or script output
 2. **Am I using a gene name or a locus tag?** → Must be locus tag
 3. **Is this from complete data or truncated?** → Check `truncated`
-4. **Am I comparing across studies?** → Can compare direction and
-   magnitude, not p-values
+4. **Am I comparing across studies?** → Compare direction and rank; compare
+   magnitude only within one platform and study; never p-values
 4b. **Am I claiming a direction (up/down)?** → Confirm the log2FC sign is
    present — check the all-gene sign distribution, not just rollup counts
 5. **Am I claiming absence?** → Qualify with "in the KG" / "in

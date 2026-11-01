@@ -1,9 +1,9 @@
 [project]
 name = "multiomics-research-template"
 # Canonical version lives in the top-level VERSION file (read by preflight + the
-# usage hook). This mirror is the PEP 440 form of VERSION (0.2.0-alpha.1 → 0.2.0a1);
+# usage hook). This mirror is the PEP 440 form of VERSION (0.2.0-alpha.2 → 0.2.0a2);
 # keep it in sync on release.
-version = "0.2.0a1"
+version = "0.2.0a2"
 description = "Alpha tester template: research skills + MCP wiring for the multiomics KG. Clone, point at the lab KG, run analyses in Claude Code."
 requires-python = ">=3.11"
 dependencies = [
@@ -15,6 +15,7 @@ dependencies = [
     "scikit-learn>=1.8.0",
     "matplotlib>=3.7",
     "seaborn>=0.13",
+    "openpyxl>=3.1",
 ]
 
 # The explorer is pulled from a pinned git tag — no sibling clone needed.

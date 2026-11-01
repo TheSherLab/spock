@@ -16,6 +16,7 @@ edited here).
 ```
 .claude/skills/research-methodology/   # Domain rules + the Plan→Run research arc (reference skill)
 .claude/skills/recipes/                # On-demand analysis protocols land here as methods are formalized (none yet)
+.claude/agents/                        # kg-coder (Run-phase coding subagent) + critic (read-only reviewer)
 .mcp.json                              # Registers the multiomics-kg MCP server (uv run)
 .env / .env.example                    # KG credentials (gitignored; copy the example)
 hooks/                                 # Usage-logging hook (writes into usage/)
@@ -50,8 +51,12 @@ Every analysis is two phases:
   enumerated from the KG
 - **Framing** — enumerated concretely: hypothesis, approach, statistics plan (the
   specific test or a reasoned "none"), a named validation set (check
-  genes/pathways with expected behavior), and a falsifiability check (what
-  "nothing real" looks like, plus a pre-registered expected-negative)
+  genes/pathways with expected behavior), a falsifiability check (what
+  "nothing real" looks like, plus a pre-registered expected-negative), and design
+  comparability (per experiment: what each arm is compared against and that
+  reference's physiological state, shared samples or models, what it can confirm)
+- The Plan closes on a **design review** with the researcher (open choices, each
+  with a recommendation), followed by a delta critic pass over what changed
 
 **Run** — three milestones, each in its own folder, one commit each:
 - **methods** — ad-hoc Python module implementing the approach the proposal
@@ -72,7 +77,10 @@ approval at **decide** (after it). The **decide** phase produces a minimal
 `notebook.md` checklist and pauses for explicit researcher approval before
 committing. Execution (KG queries, scripts) is delegated to a coding subagent
 (`superpowers:subagent-driven-development`) that returns artifacts, not
-conclusions; the main thread owns `notebook.md` and all judgment. See
+conclusions; the main thread owns `notebook.md` and all judgment. Use the
+`kg-coder` agent for that role and continue it across the milestone. Figures use
+the `dataviz` skill; each milestone ends with a self-contained `report.html`; and
+`paper.md` is paper-ready prose for the eventual paper's reader. See
 `.claude/skills/research-methodology/references/step-protocol.md` for commit
 timing, the decide-gate checklist, hard gates, and the delegation rules.
 

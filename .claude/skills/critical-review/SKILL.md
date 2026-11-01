@@ -1,6 +1,6 @@
 ---
 name: critical-review
-description: Use before the researcher sees a claim-bearing artifact of a research analysis — the proposal at the close of the Plan phase, the analysis and evaluation milestones at their decide phase, the methods milestone when it emits a data artifact, and any milestone whose claims expanded after its earlier pass — plus on demand at any point. Dispatches a fresh-context critic that re-checks the artifact's own claims against its own files. The proposal gets interpretation only; the analysis and data-emitting methods milestones get data-integrity + interpretation; the evaluation milestone gets interpretation only. The critic reviews only that artifact's files; earlier phases are trusted inputs, not re-audited.
+description: Use before the researcher sees a claim-bearing artifact of a research analysis — the proposal at the close of the Plan phase (and again after the design review changes it), the analysis and evaluation milestones at their decide phase, the methods milestone when it emits a data artifact, and any milestone whose claims expanded after its earlier pass — plus on demand at any point. Dispatches a fresh-context critic that re-checks the artifact's own claims against its own files. The proposal gets interpretation only; the analysis and data-emitting methods milestones get data-integrity + interpretation; the evaluation milestone gets interpretation only. The critic reviews only that artifact's files; earlier phases are trusted inputs, not re-audited.
 ---
 
 # Critical review
@@ -64,7 +64,12 @@ read the parts list as a *trusted input*.
 the **explore** phase runs *after* it by construction — the researcher asks for
 follow-on analyses, and new scripts, figures and conclusions land during decide.
 **If a milestone's claims materially expand after its pass, re-run the critic
-over the delta before closing.** Tell the re-dispatch which prior files are
+over the delta before closing.** **The proposal gets delta passes too:** the Plan
+phase closes on a design review with the researcher, which usually changes the
+framing after the proposal critic ran — re-run it over the changed sections, with
+the earlier proposal as a trusted input. *(N-import coculture: two Plan-phase
+delta passes, about 70k tokens each, found one Blocker and five Concerns in the
+additions.)* Tell the re-dispatch which prior files are
 already-reviewed (list them as trusted inputs) so it reviews only the new work,
 not the whole milestone again. Treat a milestone that explored after its pass and
 closed without a delta pass as having closed unreviewed work — the clean first
@@ -94,8 +99,11 @@ not a fresh-context dispatch.
 `analyses/<name>/analysis/` under `analyses/<name>/`; for a framing review, the
 proposal files at the analysis root).
 
-**2. Dispatch a `general-purpose` subagent**, filling the template at
-[critical-reviewer.md](critical-reviewer.md).
+**2. Dispatch the `critic` agent** (`.claude/agents/critic.md` — it cannot edit
+files; fall back to a `general-purpose` subagent if it isn't available), filling
+the template at [critical-reviewer.md](critical-reviewer.md). Dispatch a fresh
+critic for every pass, delta passes included — never continue an earlier one; a
+critic that remembers the last pass is no longer reading cold.
 
 Placeholders:
 - `{ANALYSIS_ROOT}` — path to the analysis directory

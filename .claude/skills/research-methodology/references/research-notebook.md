@@ -17,11 +17,13 @@ Look at the data before drafting the plan. Pull what's in the KG — counts, fie
 Concrete rules:
 - **The Plan phase grounds the dialogue in MCP queries, not assumptions.** Before locking scope or framing, run `list_publications`, `list_experiments`, `list_organisms` filtered to the prompt's context. Surface counts and structural surprises (e.g. "axenic RNA-seq is single-contrast, not time-course") in the dialogue. Capture the queries and key counts in `proposal_notebook.md`.
 - **The Plan phase locks the question and framing, not sub-questions.** Sub-narratives that form during dialogue (e.g., "protein persists while mRNA is gone") are for the Run phase to test. Defer; note them.
-- **Framing has a floor, not a template.** The floor — all five, stated concretely: hypothesis in prose; approach (how and why); a deliberate statistics decision (the specific test and thresholds, *or* an explicit reasoned "none, because descriptive"); a named validation set (genes/pathways whose behavior is already known, with the expected behavior if the method works); a falsifiability check (the result that would say the method found nothing real, and a pre-registered expected-negative class that should *not* score if the signal is genuine). Nothing beyond the floor unless the data forces it.
+- **Ask what the result is for before locking the question.** Is this a standalone result, or part of a paper (or a rewrite of one)? Whose hypothesis is it — the researcher's own, possibly unpublished, or a published claim being tested? The answer changes what counts as a finding and who is anchored to it. *(N-import coculture: the anchor was the researcher's own preprint, which the analysis was rewriting; the Plan learned this only at approval.)*
+- **Framing has a floor, not a template.** The floor — all six, stated concretely: hypothesis in prose; approach (how and why); a deliberate statistics decision (the specific test and thresholds, *or* an explicit reasoned "none, because descriptive"); a named validation set (genes/pathways whose behavior is already known, with the expected behavior if the method works); a falsifiability check (the result that would say the method found nothing real, and a pre-registered expected-negative class that should *not* score if the signal is genuine); and design comparability (below). Nothing beyond the floor unless the data forces it.
+- **Design comparability — one row per experiment used.** A metric can be comparable while the *designs* are not. For each experiment, state: its role in the analysis; what each arm is compared against (the reference sample, and that sample's physiological state — growth phase, nutrient status, sampling day); whether its contrasts share samples or one fitted model (if so they are not independent evidence); and what it can and cannot confirm. The KG does not hold everything here — reference-culture physiology often lives only with the researcher — so **ask the researcher** for the culture states the KG doesn't record, and mark those cells as researcher-supplied. A table is the natural form. *(Two analyses running: Alteromonas coculture hit an FDR-family-size trap across experiments; N-import coculture missed that late coculture vs early axenic confounds partner with starvation length, that the axenic "early" reference was a late-decline culture, that each arm's RNA reference was its own already-stressed exponential phase, and that the coculture-vs-axenic contrasts were algebraically one fitted model.)*
 - **Predictions are named, not matrixed.** If confirmation bias is a real risk, name 1–3 predictions — not a 4×4 matrix of ordering and thresholds.
 - **Stability checks are added when a specific result triggers them**, not planned up front.
 - **Decisions are written when forced by data**, not anticipated. No "we may decide X" placeholders.
-- **The methods milestone stays minimal** — ad-hoc Python module implementing exactly the approach the proposal committed to.
+- **The methods milestone is minimal — unless it constructs the entity set.** A method that scores a set the proposal already defines is an ad-hoc Python module implementing exactly that approach. A method that *builds* the set — transport systems, a curated candidate list, tiers, classes, links between parts — is a **discovery milestone**: plan it as one. Expect many decisions at its decide gate (budget the researcher's time for them), several versions of the module, and the layered verification in [Phase 1 — Analysis code](#phase-1--analysis-code-methodology-first). *(Both analyses so far: Alteromonas coculture became a discovery milestone by accident; N-import coculture planned one and took 21 decisions across seven module versions.)*
 - **Caveats are harvested at the evaluation milestone** from what actually happened; not pre-cataloged.
 
 This principle governs the whole arc. If you find yourself listing or architecting things the analysis might need before the data has arrived, stop.
@@ -29,9 +31,9 @@ This principle governs the whole arc. If you find yourself listing or architecti
 ## The arc
 
 **Plan phase** — one grounded `superpowers:brainstorming` conversation converging on `proposal.md`:
-1. **Question** — the locked research question
+1. **Question** — the locked research question, plus what it is for (standalone result or part of a paper; whose hypothesis)
 2. **KG entries** — relevant publications, experiments, organisms, data types, enumerated from the KG
-3. **Framing** — hypothesis, approach, statistics plan, validation set, falsifiability check / expected-negative, all in KG terms (the enumerated floor above)
+3. **Framing** — hypothesis, approach, statistics plan, validation set, falsifiability check / expected-negative, design comparability, all in KG terms (the enumerated floor above)
 
 `proposal.md` is the **research proposal**, locked at the end of the Plan phase. The Run phase executes against it.
 
@@ -49,7 +51,7 @@ Every Run milestone advances through these phases (see [step-protocol.md](step-p
 - **co-define** — before doing the work, propose the milestone to the researcher in plain language (what it should produce, the judgment calls, why) and let them shape it; begin only once you've agreed
 - **do** — the coding subagent does the agreed work; outputs land wherever they naturally belong
 - **show** — the main thread populates `notebook.md` from the subagent's returned artifacts and run-manifest
-- **explore** — investigate anomalies, surprises, or gaps; each question is a fresh subagent invocation returning the artifact that answers it; the main thread interprets
+- **explore** — investigate anomalies, surprises, or gaps; each question is a new request to the same coding subagent, returning the artifact that answers it; the main thread interprets
 - **decide** — finalize notebook, update paper.md, run critical review (analysis + evaluation; methods when it emits a data artifact; a delta pass if claims grew after the first pass), present state to researcher, commit on approval
 
 ## notebook.md format
@@ -94,7 +96,19 @@ A milestone's `notebook.md` represents what-we-now-believe-happened in that mile
 
 ## paper.md growth pattern
 
-Single `paper.md` at the analysis root. Skeleton sections exist from day 1 (seeded by Claude during scaffolding at the start of the Plan phase) and fill in as the analysis advances — during the Plan commit and each Run milestone's **decide** phase, after the notebook is finalized but before the commit.
+Single `paper.md` at the analysis root. **It is written for the reader of the eventual paper, not for the team that ran the analysis**: each section must drop into a manuscript as is — its Methods into a Methods section, its Results into Results — with nothing to strip out first. Skeleton sections exist from day 1 (seeded by Claude during scaffolding at the start of the Plan phase) and fill in as the analysis advances — during the Plan commit and each Run milestone's **decide** phase, after the notebook is finalized but before the commit.
+
+**`paper.md` is journal prose. The process record lives elsewhere.** The notebooks, `proposal.md`, critic files and `gaps_and_friction.md` carry the how-we-got-here; `paper.md` carries only what a reader of the paper needs:
+- **No internal vocabulary** — no milestone names, decide gates, step labels, critic findings, version numbers of the module, or labels like "E7" or "tier B" unless defined in the text as they would be in a paper.
+- **No file paths or script names** in the prose. Methods name the data sources (publications, experiments, KG release), the procedure and the statistics, as a Methods section would.
+- **Figures and tables by number** ("Fig. 2", "Table 1"), each with a caption, pointing at the static files in the milestones' `figures/` (see [figures-and-reports.md](figures-and-reports.md)).
+- **Every number in the text traces to a data file.** The trace is recorded in the milestone's `notebook.md`, not in the paper.
+- **Every citation is in References, and every reference is cited**, resolved through `list_publications` (below).
+- **Tags stay out of the prose.** `[KG]` / `[interpretation]` / `[gap]` tags (Rule 3) belong to the notebooks; in `paper.md` the same distinction is made in words, as a paper would ("the data show …" vs "this suggests …").
+
+*(N-import coculture: `paper.md` drifted into a process record — internal vocabulary, file paths, two cited papers missing from References and one listed but uncited — and a separate journal-style manuscript had to be written at the end.)*
+
+**The conclusion leads with a findings table.** At the evaluation milestone, the Discussion opens with one table — one row per question or route, one column per reference or condition, a short verdict in each cell — followed by **numbered plain-language meanings**, one per pattern in the table, each a sentence or two a biologist outside the project could restate. Caveats go in their own short section after the meanings, each tied to the finding it limits. Do not fold every caveat into the conclusion sentence: critic-hardened prose that carries all its caveats inline becomes unreadable. *(N-import coculture: the researcher rejected the critic-hardened conclusion as "a long paragraph that says we know nothing"; a findings table plus numbered meanings fixed it.)*
 
 | paper.md section | Populated from |
 |---|---|
@@ -102,12 +116,12 @@ Single `paper.md` at the analysis root. Skeleton sections exist from day 1 (seed
 | Background | Plan phase (KG entries and prior work) |
 | Methods | Plan phase (framing) + methods milestone (implementation) |
 | Results | analysis milestone |
-| Discussion | evaluation milestone |
+| Discussion (findings table → numbered meanings → caveats) | evaluation milestone |
 | References | accumulates across every phase that cites publications |
 
-References are populated as publications are cited. Every reference must be resolved through `list_publications` and cited by DOI or KG experiment ID — never drafted from intrinsic knowledge (see [anti-hallucination.md — Category 5.2](anti-hallucination.md#52-publication-attribution-from-training-knowledge)). Citation format inside prose can be short (author-year or numeric); the References section at the end carries the resolved DOI or experiment ID for each.
+References are populated as publications are cited. Every reference must be resolved through `list_publications` and cited by DOI — never drafted from intrinsic knowledge (see [anti-hallucination.md — Category 5.2](anti-hallucination.md#52-publication-attribution-from-training-knowledge)). Citation format inside prose can be short (author-year or numeric); the References section at the end carries a full reference with its DOI for each publication. KG experiment IDs are internal: they go in the notebooks, and `paper.md` names a dataset as a paper would (the publication, organism, condition, and the KG release used, stated once in Methods).
 
-When the analysis ends, the paper ends. A recurring failure mode was deferring write-up to a final step that never happened — `paper.md`'s incremental growth prevents this.
+When the analysis ends, the paper ends. A recurring failure mode was deferring write-up to a final step that never happened — `paper.md`'s incremental growth prevents this. At the evaluation milestone's decide phase, read `paper.md` top to bottom once as a journal reviewer would, against the list above, before presenting it.
 
 ## gaps_and_friction.md (transitional)
 
@@ -124,8 +138,19 @@ These can co-occur — a methodology gap can force both a decision and a frictio
 - Methodology gaps discovered during execution (nuances the framing didn't anticipate)
 - Anti-hallucination corrections (claims from memory caught by verification)
 - Process friction (things that slowed the work)
+- **What worked** — a practice that caught an error or saved time and should be kept (a check, a prompt pattern, a way of splitting work). The log is the evidence base for writing up best-known methods, so it records wins as well as problems.
 
-Each entry is prose with a date, a short name, what happened, and — if relevant — the workaround and the downstream impact on methodology/KG/tooling.
+Each entry is prose with a date, a short name, a **type tag**, what happened, and — if relevant — the workaround and the downstream impact on methodology/KG/tooling. Type tags, one per entry, so logs from many analyses can be pooled:
+
+| Tag | Use for |
+|---|---|
+| `[pitfall]` | a mistake the method or the agent made, and how it was caught |
+| `[bkm]` | a best-known method: something that worked and should be kept |
+| `[kg-gap]` | data the KG doesn't hold, or holds wrongly |
+| `[tool]` | an MCP / explorer / Claude Code / environment problem |
+| `[method-gap]` | something the methodology didn't anticipate |
+
+Example: `2026-10-08 · [pitfall] · offset paging swapped rows` — then what happened, how it was caught, the workaround.
 
 **Write the entry when it happens, not at the end.** The log decays late in a run, when the milestones are heaviest and the lessons most expensive. Two recurring leaks to watch: a `notebook.md` that points at an entry never written, and a **critic finding that exposed a gap the framing didn't anticipate** — that is friction (what the *next* analysis needs to know), not only a disposition (what you fixed in *this* one). The decide gate checks both — see [step-protocol.md — "decide" phase](step-protocol.md).
 
@@ -141,7 +166,9 @@ The brainstorming skill's dialogue pattern (clarifying questions one at a time, 
 2. **KG grounding alongside the dialogue.** Brainstorming is pure conversation by default. The Plan phase adds MCP grounding (`list_publications`, `list_experiments`, `list_organisms` filtered to the prompt's context) before scope or framing decisions. Capture queries and counts in `proposal_notebook.md`. See the Just-in-time concrete rules above for the rationale.
 3. **Terminal action.** The skill's terminal state is invoking `superpowers:writing-plans`. **Skip this.** The Plan phase's approval advances to the Run phase (methods milestone), not to implementation-plan writing. `proposal.md` *is* the plan — the enumerated framing replaces a separate implementation plan.
 
-Brainstorming's own **spec self-review** and **user-reviews-the-spec** steps are kept — they become the Plan phase's close gate, plus one addition: the fresh-context critic runs on every proposal (interpretation-only) before the researcher approves. See [step-protocol.md — The Plan phase](step-protocol.md) for the ordered close (self-review → critic → researcher approval → commit → Run begins).
+Brainstorming's own **spec self-review** and **user-reviews-the-spec** steps are kept — they become the Plan phase's close gate, plus one addition: the fresh-context critic runs on every proposal (interpretation-only) before the researcher approves. See [step-protocol.md — The Plan phase](step-protocol.md) for the ordered close (self-review → critic → design review with the researcher → delta critic pass over the changes, repeating until approval brings no further change → commit → Run begins).
+
+**The approval step is a design review, not a sign-off.** In both analyses so far the researcher answered "approve?" with design input — four rounds in a row in the second — and each reopened the proposal. So present the proposal at the close as a **short list of the open design choices** (what is compared, how the set is defined, which controls, what is deferred), each with your recommendation, not as a finished document to accept. Expect changes, and after them run a scoped delta critic pass over what changed.
 
 If the skill's preamble nudges toward writing a spec doc outside the analysis folder or invoking writing-plans at the end, treat those as defaults being overridden by this methodology skill (which has higher priority for research work in this repo).
 
@@ -168,7 +195,8 @@ What to show depends on the phase.
 - Cross-condition comparison with expectation check against the proposal's framing
 
 ### Evaluation (evaluation milestone)
-- Named predictions held / not held
+- Findings table (question/route × reference/condition) and numbered meanings — see [paper.md growth pattern](#papermd-growth-pattern)
+- Named predictions held / not held; if pre-registered labels were deferred, the falsifiability check is reported as "not evaluated as pre-registered", not replaced by a post-hoc criterion
 - Sensitivity / LOO stability where applicable
 - Harvested caveats
 
@@ -201,6 +229,17 @@ Code lives in the analysis directory. Goal: correct methodology, not good softwa
 - **The main thread spot-runs the utility on one real row** before the milestone closes, and logs the result as a QC-gate line. Re-deriving one real case by hand is what catches what the suite structurally cannot.
 
 *Why (Alteromonas coculture, 2026-07-23):* a reference-class assigner used `bool(row["in_candidate"])`; the real CSV stores that field as the string `"False"`, and `bool("False")` is truthy — on real data every system would have collapsed into one class, destroying the control structure the whole null comparison rested on. All 27 tests passed, because the fixture used Python booleans. A spot-run on one real CSV row caught it.
+
+**When the method constructs the entity set, one spot-run is too thin — verify in four layers.** The pilot (layer 2) takes the spot-run's place, at a larger scale. Each layer catches an error class the others structurally cannot. Run them in this order, before the set is scaled to every organism or handed to the analysis milestone, and log each as a QC-gate line. **Layers 2 and 3 are done by someone other than the module's author** — the main thread, or a fresh agent that has not seen the module — or the answer key is not independent:
+
+| Layer | What it is | What only it catches |
+|---|---|---|
+| 1. Real-serialization fixtures | toy inputs in the real file form (above) | parsing traps: `bool("False")`, pandas reading `"n/a"` as NaN |
+| 2. Pilot against an independent answer key | for one organism or a handful of systems, build the expected answer step by step through MCP calls alone — not with the module — then diff the module's output against it | wrong API defaults and rule gaps (a gene-set size default that undercounted BRITE 57 vs 86; `fadD` called a transporter; a missing domain on `pstS`) |
+| 3. API-usage review | before scaling, read how the module calls each explorer function against the explorer's source and `docs://` pages: defaults, sort order, paging, what a filter drops | tool-internal behaviour no count check sees (offset paging over a non-unique sort silently swapped rows while every count passed) |
+| 4. Bin sample | before any tier or class rule is approved, look at a random sample of the members of each bin | rules that look right but fill bins wrongly (a "Medium" tier that was mostly helicases and proteases) |
+
+The researcher sees layer 4's samples at the decide gate: a rule is approved on what it puts in the bin, not on how it reads. *(N-import coculture, 2026-10.)*
 
 **Refine through the notebook QC cycle.** The co-define → do → show → explore → decide loop is how methodology gets validated. Formula corrections, edge cases, direction logic — all discovered through the researcher walking through concrete examples.
 

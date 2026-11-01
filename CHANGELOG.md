@@ -11,6 +11,97 @@ explorer pin lives in `pyproject.toml` and the KG version comes from
 
 ## [Unreleased]
 
+## [0.2.0-alpha.2] — 2026-11-01
+
+Third dogfood harvest, from the analysis of which nitrogen compounds
+*Alteromonas* passes to *Prochlorococcus* in coculture (full review:
+`docs/methodology-review-2026-10.md` in the consumer clone). Prepared for the
+first workshop, where every attendee runs the template. Patch-level bump: the
+analysis folder layout gains files (`report.html`, agents) but nothing moves, so
+analyses in progress continue as they are.
+
+### Added
+- **Figures follow the `dataviz` skill, and every milestone ends with an HTML
+  report.** A new reference, `figures-and-reports.md`, makes Claude Code's
+  bundled `dataviz` skill the way every figure is made. It also fixes the
+  template's colours (orange = up, blue = down, a gray midpoint, violet for
+  ranks, all checked with dataviz's validator) and the figure conventions the
+  last analysis had to reach one request at a time: a colorbar on every heatmap,
+  dividers between condition blocks, fold change with both ends labelled in
+  words, one word per cell in summary figures, and one omics layer per panel.
+  Each Run milestone now also produces `report.html`, a self-contained page
+  rebuilt from its data files. It opens offline and has figures you can hover
+  over and tables you can sort and filter.
+- **Two named agents in `.claude/agents/`.** `kg-coder` is the Run-phase coding
+  subagent. It preloads the methodology and `dataviz`, so the domain rules travel
+  with it instead of depending on the prompt, and is continued across a
+  milestone. `critic` is the reviewer the `critical-review` skill dispatches. It
+  cannot edit files, and a fresh one runs for every pass.
+- **Design comparability is part of every framing.** For each experiment the
+  proposal now states what each arm is compared against and that reference
+  sample's physiological state, whether contrasts share samples or one fitted
+  model, and what the experiment can and cannot confirm. The researcher is asked
+  for the culture states the KG does not hold. This was the second analysis in a
+  row whose framing compared the same metric across designs that weren't
+  comparable: here, a late-decline "early" reference and contrasts that were one
+  fitted model.
+- **The Question stage asks what the result is for:** a standalone result, or
+  part of a paper (or a rewrite of one), and whose hypothesis it is. Last time
+  the Plan learned only at approval that the anchor was the researcher's own
+  preprint.
+
+### Changed
+- **The Plan phase closes on a design review, not a sign-off.** In both analyses
+  so far the researcher answered "approve?" with design input, four rounds in a
+  row the second time. The close now presents a short list of the open design
+  choices, each with a recommendation, and runs a scoped delta critic pass over
+  whatever the review changed. The `critical-review` skill now covers
+  Plan-phase delta passes.
+- **A methods milestone that builds the entity set is planned as a discovery
+  milestone.** "The methods milestone stays minimal" did not hold for the second
+  time: a method that builds transport systems, tiers and classes took 21
+  decisions across seven versions. Such a milestone now plans for that, and
+  replaces the single spot-run on one real row with four verification layers,
+  each of which caught errors the others could not:
+  1. fixtures in the real file format;
+  2. a pilot against an independent answer key built from MCP calls alone;
+  3. a review of how the module calls the explorer (an offset-paging bug passed
+     every count check);
+  4. a random sample of every bin before its rule is approved (a "Medium" tier
+     turned out to be mostly helicases).
+- **`paper.md` is paper-ready.** It is written for the reader of the eventual
+  paper and drops into a manuscript as is. It contains no internal vocabulary,
+  file paths or process history (those stay in the notebooks), uses figure
+  numbers and captions, and every citation must appear in References and vice
+  versa. Its conclusion opens with a findings table and numbered plain-language
+  meanings, with caveats in their own section. Last time the conclusion that had
+  absorbed every critic caveat was rejected as unreadable, and a separate
+  manuscript had to be written at the end.
+- **`gaps_and_friction.md` records what worked, not only what went wrong.**
+  Entries carry a type tag (`[pitfall]`, `[bkm]`, `[kg-gap]`, `[tool]`,
+  `[method-gap]`) so logs from many analyses can be pooled into best-known
+  methods and pitfalls.
+- **The critic checks report and paper numbers against the data, checks design
+  comparability, and writes in plain language.** Its fixes now favour a separate
+  caveat over folding every caveat into the headline.
+- **Scripting guidance for Windows:** write code to a script file rather than a
+  shell heredoc, pass `encoding="utf-8"` explicitly, and add `-X utf8` when
+  running a bundled tool with `python -I`. `openpyxl` is now a dependency, for
+  Excel supplements.
+
+### Fixed
+- **Preflight could pass with `superpowers` missing from this clone.**
+  `claude plugin list` also reports installs scoped to *other* projects, and
+  without `jq` the check matched any of them. It now parses the list with the
+  venv's Python and accepts only a user-scoped install or one scoped to this
+  repo.
+- **Preflight now warns when `jq` is missing.** Without `jq` the usage hook skips
+  without a message, so logging was off with no sign of it.
+- **The anti-hallucination self-check allowed comparing fold-change magnitudes
+  across studies,** contradicting the statistics reference. It now says: compare
+  direction and rank across studies, magnitude only within one platform and
+  study, and never p-values.
+
 ## [0.2.0-alpha.1] — 2026-09-15
 
 Second dogfood harvest, carried in from the consumer clone that ran the arc end

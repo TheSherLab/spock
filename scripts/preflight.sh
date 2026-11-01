@@ -3,7 +3,8 @@
 #
 # Produces ONE green/red answer after checking, in order:
 #   0. Staleness   — offline tag compare vs the template remote (informational).
-#   0.5 Plugin     — the required `superpowers` plugin is installed/enabled (RED if not).
+#   0.5 Plugin     — the required `superpowers` plugin is enabled for THIS repo (RED if not).
+#   0.6 jq         — usage logging needs jq; warns (not RED) if missing.
 #   1. Triple      — template / explorer / KG versions, printed on one line.
 #   2. Contract    — kg_release_info: installed explorer satisfies KG.mcp_min_version,
 #                    the load-bearing schema shape is present, and the KG's
@@ -50,14 +51,27 @@ fi
 # Declared in .claude/settings.json (enabledPlugins) and pulled from the official
 # Anthropic marketplace when the workspace is trusted. Verify it actually resolved —
 # without it, Plan-phase brainstorming (superpowers:*) cannot run.
+# `claude plugin list` also reports project-scoped installs of OTHER repos, so an
+# entry only counts if it is user-scoped or scoped to this repo. Parsed with the
+# venv's Python (uv is required anyway) — no jq dependency, which used to let a
+# plain grep pass on another project's install.
 if command -v claude >/dev/null 2>&1; then
-  PLUGINS_JSON="$(claude plugin list --json 2>/dev/null || echo '[]')"
-  if command -v jq >/dev/null 2>&1; then
-    sp_enabled="$(printf '%s' "$PLUGINS_JSON" | jq -r '.[] | select(.id=="superpowers@claude-plugins-official") | .enabled' 2>/dev/null | head -1)"
-    [[ "$sp_enabled" == "true" ]] && sp_ok=1 || sp_ok=0
-  else
-    printf '%s' "$PLUGINS_JSON" | grep -q '"superpowers@claude-plugins-official"' && sp_ok=1 || sp_ok=0
-  fi
+  sp_ok="$(claude plugin list --json 2>/dev/null | PYTHONUTF8=1 uv run --quiet python -c '
+import json, os, sys
+try:
+    rows = json.load(sys.stdin)
+except Exception:
+    rows = []
+here = os.path.normcase(os.path.realpath(os.getcwd()))
+def mine(r):
+    if r.get("scope") == "user":
+        return True
+    p = r.get("projectPath")
+    return bool(p) and os.path.normcase(os.path.realpath(p)) == here
+ok = any(r.get("id") == "superpowers@claude-plugins-official"
+         and r.get("enabled") and mine(r) for r in rows)
+print(1 if ok else 0)
+' 2>/dev/null)"
   if [[ "$sp_ok" != "1" ]]; then
     red "✗ Required plugin 'superpowers' is not installed/enabled."
     yellow "   The methodology's Plan-phase brainstorming depends on superpowers:* skills."
@@ -69,6 +83,15 @@ if command -v claude >/dev/null 2>&1; then
 else
   yellow "⚠ Could not verify the 'superpowers' plugin (no \`claude\` CLI on PATH)."
   yellow "   Ensure it is installed: claude plugin install superpowers@claude-plugins-official"
+fi
+
+# ── 0.6 Usage logging needs jq (the hook skips silently without it, by design) ──
+# Not a RED: analysis works without it. But a silent skip means no usage logs,
+# which the workshop relies on, so say so loudly.
+if ! command -v jq >/dev/null 2>&1; then
+  yellow "⚠ jq not found — MCP usage logging is OFF (hooks/log-mcp-usage.sh skips without it)."
+  yellow "   Windows: winget install jqlang.jq   ·   macOS: brew install jq   ·   Linux: apt install jq"
+  yellow "   Then restart your terminal (and Claude Code) so jq is on PATH."
 fi
 
 # ── 1–3. Version triple + KG contract + API smoke (Python, via the synced venv) ──
