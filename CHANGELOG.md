@@ -109,8 +109,20 @@ adds files (`reports/`, `index.html`, `paper.html`, agents).
   caveat over folding every caveat into the headline.
 - **Scripting guidance for Windows:** write code to a script file rather than a
   shell heredoc, pass `encoding="utf-8"` explicitly, and add `-X utf8` when
-  running a bundled tool with `python -I`. `openpyxl` is now a dependency, for
-  Excel supplements.
+  running a bundled tool with `python -I`.
+- **More data libraries in the venv**, each smoke-tested on this release's
+  pandas 3:
+  - `openpyxl` and `xlrd` for Excel supplements (`.xlsx` and old `.xls`);
+  - `pyarrow` for Parquet;
+  - `tabulate` for `DataFrame.to_markdown()` in notebooks;
+  - `jinja2` for report templates;
+  - `networkx`;
+  - `matplotlib-venn`;
+  - `adjustText` for gene labels that don't overlap;
+  - `biopython`.
+
+  The Python guide lists them by task. `upsetplot` was tried and left out: it
+  crashes on its first plot under pandas 3.
 
 ### Fixed
 - **Preflight could pass with `superpowers` missing from this clone.**
