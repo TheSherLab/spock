@@ -67,7 +67,7 @@ Quickest way to install the command-line tools (then install Claude Code from it
 
 | OS | Command |
 |---|---|
-| **Windows** (PowerShell) | `winget install Microsoft.VisualStudioCode Git.Git astral-sh.uv jqlang.jq` |
+| **Windows** (PowerShell) | `winget install Microsoft.VisualStudioCode Git.Git astral-sh.uv jqlang.jq --accept-source-agreements --accept-package-agreements` — one command for all four. If an older winget rejects several names, run `winget install <name>` once per package |
 | **macOS** ([Homebrew](https://brew.sh)) | `brew install git uv jq` and `brew install --cask visual-studio-code` |
 | **Linux** (Debian/Ubuntu) | `sudo apt install git jq`, then `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 
