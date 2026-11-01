@@ -50,9 +50,25 @@ details; the changes most likely to affect an analysis are:
   `publication_doi` → `publication_dois`, `value_min` → `min_value`, and
   `kg_release_info(conn)` → `kg_release_info(conn=conn)` (preflight itself had
   to change).
+- **`gene_neighbors` caps `window` at 100.** A larger window now raises
+  `ValueError`.
+- **TCDB family-level substrates are opt-in.** Pass
+  `include_tcdb_family_substrates=True` to get them. Without it, the metabolite
+  tools warn: "No direct TCDB system call …".
+- **New warnings appear on the metabolite tools** (for example "Stereo forms hold
+  more rows …"). A script that fails on any warning it doesn't recognise will
+  stop on them.
 - **The KG content changed** (75 genome strains, 11 papers, corrected fold
   changes, refreshed KEGG/TCDB/GO). Re-running an older analysis will not
   reproduce its numbers.
+
+  *Release QA* re-ran the N-import coculture analysis under alpha.6:
+  - Both toy-test suites still pass.
+  - The methods scripts stopped on the removed TCDB columns, the window cap and
+    the new warnings.
+  - The MED4 transporter universe went from 365 to 225 genes (the TCDB calls
+    from 356 to 203).
+  - One axenic RNA experiment has half its former rows.
 
 ### Added
 - **Figures follow the `dataviz` skill, and results come back as HTML pages.** A new reference, `figures-and-reports.md`, makes Claude Code's
@@ -149,7 +165,9 @@ details; the changes most likely to affect an analysis are:
   - `networkx`;
   - `matplotlib-venn`;
   - `adjustText` for gene labels that don't overlap;
-  - `biopython`.
+  - `biopython`;
+  - `pytest`, which the methods milestone's toy tests need. `uv sync` used not
+    to install it.
 
   The Python guide lists them by task. `upsetplot` was tried and left out: it
   crashes on its first plot under pandas 3. biopython is capped below 1.87,

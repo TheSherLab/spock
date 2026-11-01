@@ -46,6 +46,7 @@ For **which** interface to use (browse in MCP vs extract in Python), see
   | HTML reports | `jinja2` templates; `df.style.to_html()` |
   | networks | `networkx` (ortholog groups, pathway graphs) |
   | sequences | `biopython` (`Bio.Seq`, `Bio.SeqIO` for FASTA) |
+  | toy tests (methods milestone) | `pytest` — `uv run python -m pytest -q <milestone>/tests` |
 
   For overlaps of more than three gene sets, draw an intersection-size bar chart
   with matplotlib (`upsetplot` is not installed: it breaks under pandas 3).
