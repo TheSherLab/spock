@@ -16,9 +16,13 @@ explorer pin lives in `pyproject.toml` and the KG version comes from
 Third dogfood harvest, from the analysis of which nitrogen compounds
 *Alteromonas* passes to *Prochlorococcus* in coculture (full review:
 `docs/methodology-review-2026-10.md` in the consumer clone). Prepared for the
-first workshop, where every attendee runs the template. Patch-level bump: the
-analysis folder layout gains files (`reports/`, `index.html`, `paper.html`, agents) but nothing moves, so
-analyses in progress continue as they are.
+first workshop, where every attendee runs the template.
+
+**This is the first public 0.2.0 release.** It includes everything in the
+0.2.0-alpha.1 section below, which was an internal test build and was never
+tagged. Coming from 0.1.0-alpha.2, read both sections. 0.2.0-alpha.1's
+folder-layout change (the Plan → Run arc) is the breaking one; this release only
+adds files (`reports/`, `index.html`, `paper.html`, agents).
 
 ### Added
 - **Figures follow the `dataviz` skill, and results come back as HTML pages.** A new reference, `figures-and-reports.md`, makes Claude Code's
@@ -112,7 +116,11 @@ analyses in progress continue as they are.
   direction and rank across studies, magnitude only within one platform and
   study, and never p-values.
 
-## [0.2.0-alpha.1] — 2026-09-15
+## [0.2.0-alpha.1] — 2026-09-15 (internal test build, not released)
+
+*Used only to dogfood the arc in the consumer clone; never tagged. Its changes
+ship in 0.2.0-alpha.2. The version string still appears in that clone's usage
+logs and in the October methodology review, so the number is not reused.*
 
 Second dogfood harvest, carried in from the consumer clone that ran the arc end
 to end (which organic carbon compounds *Alteromonas* takes up in coculture with
