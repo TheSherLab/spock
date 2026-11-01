@@ -61,9 +61,10 @@ exploration log format, and file naming conventions.
 
 **Figures use the `dataviz` skill — load it before the first line of plotting
 code**, with the template's colour parameters (orange = up, blue = down) and
-figure conventions. Each Run milestone ends with a self-contained
-`report.html` the researcher can explore — interactive where hover, sort or
-filter helps. See [Figures and reports](references/figures-and-reports.md).
+figure conventions. Each Run milestone produces self-contained HTML
+reports the researcher can explore — a `summary.html` plus one page per
+aspect, interactive where hover, sort or filter helps — all listed in the
+analysis's generated `index.html`. See [Figures and reports](references/figures-and-reports.md).
 
 ## Rule 5: Scripts over chat reasoning
 
@@ -367,7 +368,7 @@ See [Anti-hallucination — 2.6 Emotive vocabulary and speculative proposals](re
 - [Step protocol](references/step-protocol.md) — read at the start of every analysis execution; owns commit timing, decide-gate checklist, hard gates, redo path
 - [Research notebook](references/research-notebook.md) — read when starting or resuming an analysis; owns notebook format, paper.md growth, gaps_and_friction.md, brainstorming override for the Plan phase
 - [Artifacts guide](references/artifacts.md) — read at scaffold time or when unsure about directory structure, per-milestone folders, QC naming
-- [Figures and reports](references/figures-and-reports.md) — read before making any figure or a milestone's `report.html`; owns the colour parameters, figure conventions, and report contents
+- [Figures and reports](references/figures-and-reports.md) — read before making any figure or report page; owns the colour parameters, figure conventions, and report contents
 - [Anti-hallucination](references/anti-hallucination.md) — read before presenting findings; covers tool-schema claims, publication attribution, field semantics, and the other anti-hallucination patterns
 - [KG rules](references/kg-rules.md) — read when scoping a new analysis or uncertain about data sourcing vs literature
 - [Gene identity](references/gene-identity.md) — read when working with gene names, paralogs, or orthologs

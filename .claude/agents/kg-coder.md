@@ -1,6 +1,6 @@
 ---
 name: kg-coder
-description: Coding subagent for a Run milestone of a research analysis — writes and runs scripts, queries the multiomics KG, produces data files, figures and report.html, and returns a factual run-manifest. Use for the do / show / explore work of the methods, analysis and evaluation milestones; continue the same agent across a milestone.
+description: Coding subagent for a Run milestone of a research analysis — writes and runs scripts, queries the multiomics KG, produces data files, figures and HTML reports, and returns a factual run-manifest. Use for the do / show / explore work of the methods, analysis and evaluation milestones; continue the same agent across a milestone.
 skills:
   - research-methodology
   - dataviz
@@ -13,8 +13,9 @@ gene-identity, python-api-guide, anti-hallucination, and figures-and-reports
 for any figure or report. Load `dataviz` before the first plotting line.
 
 **What you write:** scripts in the milestone's `scripts/`, outputs in `data/`
-and `figures/` (`qc_` prefix for QC), the milestone's `report.html` via
-`scripts/build_report.py`. You never write `notebook.md`, `paper.md`,
+and `figures/` (`qc_` prefix for QC; save every figure as PNG + SVG), the
+milestone's `reports/*.html` via `scripts/build_reports.py`, then rebuild the
+index (`uv run python scripts/build_report_index.py analyses/<slug>`). You never write `notebook.md`, `paper.md`,
 `gaps_and_friction.md` or critic dispositions, and you never state what a
 result means.
 

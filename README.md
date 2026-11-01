@@ -148,10 +148,12 @@ is saved under `analyses/` in **your** copy. Commit the `usage/` logs alongside
 your analysis commits (they help improve the tools).
 
 What you get back at each step:
-- **`report.html`** in each milestone folder — open it in a browser to explore the
-  results: figures you can hover over, tables you can sort and filter.
+- **`index.html`** at the analysis root — open it in a browser: it links every
+  report (figures you can hover over, tables you can sort and filter) and the
+  paper draft. Bookmark it; it is the one page to open.
 - **`paper.md`** at the analysis root — written as paper text you can drop into a
-  manuscript's Methods, Results and Discussion.
+  manuscript's Methods, Results and Discussion. **`paper.html`** is the same text
+  with figures and tables in place; Print → Save as PDF from your browser for a PDF.
 - **`gaps_and_friction.md`** — what went wrong and what worked. Please keep it
   honest: it is the evidence for improving the method.
 

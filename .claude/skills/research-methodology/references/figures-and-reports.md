@@ -13,7 +13,7 @@ Each Run milestone produces two kinds of visual output:
 | Output | For whom | Where |
 |---|---|---|
 | Static figures (PNG ≥ 300 DPI + SVG) | `paper.md`, slides, the eventual paper | `<milestone>/figures/` |
-| `report.html` — one self-contained page | the researcher, at the decide gate | `<milestone>/report.html` |
+| HTML reports — a `summary.html` plus one page per aspect | the researcher, throughout the milestone and at the decide gate | `<milestone>/reports/`, all listed in `analyses/<slug>/index.html` |
 
 ## Colour parameters (the template's dataviz "design system")
 
@@ -50,6 +50,16 @@ lim = np.nanmax(np.abs(values))
 norm = TwoSlopeNorm(vmin=-lim, vcenter=0, vmax=lim)
 ```
 
+Every figure script reads its numbers from the milestone's `data/` CSVs (never
+from values typed into the script) and saves both forms, under the same stem:
+
+```python
+def save_figure(fig, stem: Path) -> None:
+    """stem = <milestone>/figures/<name>, no suffix."""
+    fig.savefig(stem.with_suffix(".png"), dpi=300, bbox_inches="tight")
+    fig.savefig(stem.with_suffix(".svg"), bbox_inches="tight")
+```
+
 ## Figure conventions for research figures
 
 Applied on top of dataviz's mark specs and anti-patterns:
@@ -72,20 +82,74 @@ Applied on top of dataviz's mark specs and anti-patterns:
 - **Captions state what is plotted, from which experiments, and n.** A caption is
   description, not interpretation (Rule 9).
 
-## The milestone report — `report.html`
+## Milestone reports — `<milestone>/reports/` and the analysis `index.html`
 
-**What it is.** One self-contained HTML page per Run milestone that lets the
-researcher look at the milestone's results instead of reading about them: the
-findings, the figures, and the tables they can sort and filter. It is a view of
-the milestone's files, not a new source of claims.
+**What they are.** Self-contained HTML pages that let the researcher look at a
+milestone's results instead of reading about them: the findings, the figures,
+and tables they can sort and filter. A report is a view of the milestone's
+files, not a new source of claims.
 
-**Contents, in order:**
-1. **What this milestone asked** — two or three plain sentences, taken from the
-   co-define agreement.
-2. **Findings table** — the same summary table as `notebook.md` Results.
-3. **Figures** — each with its caption, interactive where that helps (below).
-4. **Data tables** — the key `data/` files, sortable, filterable, with locus tags.
-5. **Files** — relative links to the scripts, data and figures behind each item.
+**Layout.** One page per *aspect*, so no single page carries everything:
+
+```
+analyses/<slug>/
+  index.html                    # front page: every report, by milestone (generated)
+  methods/reports/
+    summary.html                # required: the milestone's entry page
+    transport_tiers.html        # one page per aspect worth looking at on its own
+  analysis/reports/
+    summary.html
+    coculture_vs_axenic.html
+  evaluation/reports/
+    summary.html                # the analysis's conclusion page
+```
+
+- **`summary.html` (required, one per milestone)**, in this order:
+  1. **What this milestone asked** — two or three plain sentences from the
+     co-define agreement.
+  2. **Findings table** — the same summary table as `notebook.md` Results.
+  3. **Links to the milestone's aspect pages**, one line each.
+  4. **Files** — relative links to the scripts, data and figures behind it.
+- **Aspect pages (as many as the data needs)** — one question each ("tier members
+  per strain", "coculture vs axenic by route"), with its figures, captions and
+  sortable data tables (locus tags in every table). Split when a page needs
+  scrolling past unrelated figures to reach the next point; name the file by the
+  aspect, in snake_case.
+- **Every page carries `<title>` and `<meta name="description" content="one
+  line">`.** The index is built from these two tags.
+- The evaluation `summary.html` is the analysis's conclusion page: its findings
+  table is the conclusion's findings table, followed by the numbered meanings
+  (see [research-notebook.md — paper.md growth pattern](research-notebook.md#papermd-growth-pattern)).
+
+**Iterate in place.** Reports change many times inside a milestone, as the
+researcher asks for follow-ups. Rebuild the page; don't keep `_v2` copies or
+dated variants. Git history is the record of earlier versions, and the decide
+commit captures the state that was approved.
+
+**The index.** `analyses/<slug>/index.html` lists every report, grouped by
+milestone (summary first), plus links to `paper.md` and `proposal.md`. It is
+generated, never hand-written. Rebuild it whenever a page is added, renamed or
+retitled:
+
+```bash
+uv run python scripts/build_report_index.py analyses/<slug>
+```
+
+It warns about pages missing a title or description. Tell the researcher to
+bookmark the index: it is the one page to open.
+
+**The paper, rendered.** `paper.md` stays the source (it is what drops into a
+manuscript), and `scripts/build_paper.py` renders it as `paper.html` at the
+analysis root, with every figure embedded and every table in place: one file
+to read, send, or print to PDF. Rebuild it whenever `paper.md` or a figure it
+cites changes; it exits non-zero, with a visible placeholder in the page, when
+a referenced figure is missing:
+
+```bash
+uv run python scripts/build_paper.py analyses/<slug>
+```
+
+The paper cites the static PNG/SVG figures, not the interactive reports.
 
 **Interactive when it helps.** Add interaction where the reader would otherwise go
 back to the CSV: hover on heatmap cells and points to show gene name, locus tag,
@@ -93,20 +157,21 @@ experiment, value and padj; sort and filter on gene tables; toggles to show one
 experiment or organism at a time. A figure with a handful of values stays static.
 dataviz's interaction reference covers the hover layer and filter placement.
 
-**How it is built.**
-- The coding subagent writes `scripts/build_report.py`, which reads the
-  milestone's `data/` files and writes `report.html`. The report is rebuilt from
-  the data, never edited by hand.
+**How they are built.**
+- The coding subagent writes `scripts/build_reports.py` in the milestone folder,
+  which reads the milestone's `data/` and writes every page in `reports/`. Pages
+  are rebuilt from the data, never edited by hand.
 - **Self-contained and offline:** data inlined as JSON, plain HTML/SVG/JS per
-  dataviz, no CDN or network fetch. It must open by double-click from a lab laptop
-  and still work from a git checkout years later.
-- **The main thread owns its words.** The "what this milestone asked" text and any
-  interpretation come from `notebook.md`, which the main thread writes; the
-  subagent does not compose conclusions for the report.
-- **Render it and look before presenting** (dataviz step 7): open the file, check
-  the numbers in the findings table against `data/`, and check labels don't
+  dataviz, no CDN or network fetch. A page must open by double-click from a lab
+  laptop and still work from a git checkout years later. Share the page's look:
+  one small CSS block with the colour parameters above, reused by every page.
+- **Printable, for a PDF.** Include an `@media print` block (light colours,
+  hidden filter controls, no page break inside a figure or table row), so the
+  browser's Print → Save as PDF gives a clean PDF to send or archive. No PDF
+  tooling is needed.
+- **The main thread owns their words.** The "what this milestone asked" text and
+  any interpretation come from `notebook.md`, which the main thread writes; the
+  subagent does not compose conclusions for a report.
+- **Render and look before presenting** (dataviz step 7): open each changed page,
+  check the numbers in the findings table against `data/`, and check labels don't
   collide. A report whose numbers disagree with `notebook.md` is a Blocker.
-
-The evaluation milestone's report is the analysis's front page: its findings
-table (item 2) is the conclusion's findings table, followed by the numbered
-meanings (see [research-notebook.md — paper.md growth pattern](research-notebook.md#papermd-growth-pattern)).

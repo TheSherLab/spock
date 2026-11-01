@@ -63,9 +63,9 @@ checks — those are the author's decide-gate checklist, not your job.
   direction is unreadable.
 - Duplicate / pooled rows double-counted — the same gene appearing in both a
   per-timepoint slice and a pooled slice, summed as if distinct.
-- Report and paper vs data — do the numbers in `report.html`'s findings table
-  and in `paper.md`'s section for this milestone match the `data/` files and
-  `notebook.md`?
+- Report and paper vs data — do the numbers in this milestone's `reports/`
+  pages (start with `summary.html`'s findings table) and in `paper.md`'s section
+  for this milestone match the `data/` files and `notebook.md`?
 - Source tagging — is every number traced to a script or KG call? Is intrinsic
   ("training knowledge") reasoning labelled, or smuggled in as data?
 - Tool/citation/field claims from memory — capabilities, authors, or field

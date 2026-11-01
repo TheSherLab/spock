@@ -33,6 +33,8 @@ Simple lookups stay in chat:
 ```
 analyses/<slug>/
   paper.md                  # paper-ready writeup (drops into a manuscript), grows across the arc
+  paper.html                # paper.md with figures embedded (generated: scripts/build_paper.py)
+  index.html                # front page linking every report + the paper (generated: scripts/build_report_index.py)
   gaps_and_friction.md      # transitional — methodology/KG/tooling friction log
   .gitignore                # per-analysis, created at scaffolding
   proposal.md               # question + KG entries + enumerated framing (the plan)
@@ -40,13 +42,13 @@ analyses/<slug>/
   proposal_critical_review.md   # only when the proposal critic found something
   methods/
     notebook.md
-    report.html             # self-contained milestone report, rebuilt from data/
+    reports/                # summary.html + one page per aspect, rebuilt from data/
     <module_name>.py        # ad-hoc methods module
     scripts/, data/, figures/
   analysis/
-    notebook.md, report.html, scripts/, data/, figures/
+    notebook.md, reports/, scripts/, data/, figures/
   evaluation/
-    notebook.md, report.html, scripts/, data/, figures/
+    notebook.md, reports/, scripts/, data/, figures/
 ```
 
 **Slug format:** `YYYY-MM-DD-<descriptor>` where descriptor is snake_case, 2–4 words reflecting the research question (e.g., `2026-04-23-n_limitation_signature`). Same-day collisions: append a letter suffix (`-a`, `-b`).
@@ -80,7 +82,7 @@ Each Run-milestone folder contains:
 - **`scripts/`** — Python scripts that do the milestone's work (authored by the coding subagent)
 - **`data/`** — script outputs (CSV/TSV); inputs from prior milestones referenced by relative path
 - **`figures/`** — static PNG/SVG outputs, made with the `dataviz` skill (see [figures-and-reports.md](figures-and-reports.md))
-- **`report.html`** — the milestone report: one self-contained page (findings, figures with hover where it helps, sortable tables), built by `scripts/build_report.py` from `data/` (see [figures-and-reports.md](figures-and-reports.md#the-milestone-report--reporthtml))
+- **`reports/`** — the milestone's HTML reports: a required `summary.html` plus one page per aspect, self-contained, built by `scripts/build_reports.py` from `data/` and listed in the analysis's `index.html` (see [figures-and-reports.md](figures-and-reports.md#milestone-reports--milestonereports-and-the-analysis-indexhtml))
 - **`critical_review.md`** — at the analysis and evaluation milestones, at a methods milestone that emits a data artifact, and after a delta pass; **only when the critic found something**: its findings plus the author's disposition for each (a clean review is a one-line note in `notebook.md`, not a file). See the `critical-review` skill and [step-protocol.md GATE C](step-protocol.md)
 
 The Plan phase has no folder — it produces `proposal.md` + `proposal_notebook.md` at the analysis root (plus `proposal_critical_review.md` when the proposal critic found something), because it is a conversation, not a computation.

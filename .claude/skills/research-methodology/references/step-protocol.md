@@ -18,7 +18,7 @@ The **just-in-time formalization** principle applies throughout: terms, metrics,
 **Run milestone commit:**
 - `notebook.md` (narrative + decide-gate checklist)
 - `scripts/`, `data/`, `figures/` (main + `qc_*` files)
-- `report.html` (the milestone report, rebuilt from `data/`)
+- `reports/` (the milestone's HTML reports, rebuilt from `data/`), plus the regenerated `index.html` and `paper.html` at the analysis root
 - updates to `paper.md` (the milestone's synthesis section)
 - updates to `gaps_and_friction.md` (if the milestone encountered friction)
 - `critical_review.md` where the critic found something (analysis + evaluation milestones; methods when it emits a data artifact; any delta pass)
@@ -73,7 +73,7 @@ The coding subagent does the milestone's work:
 - **analysis:** run the method; produce scored outputs, figures, tables
 - **evaluation:** assess results against the framing; QC scripts for sensitivity/stability where a result triggers them
 
-Every figure is made with the `dataviz` skill and the template's colour parameters, and every milestone ends with a self-contained `report.html` built from its `data/` (see [figures-and-reports.md](figures-and-reports.md)).
+Every figure is made with the `dataviz` skill and the template's colour parameters, and every milestone produces HTML reports in `reports/` — a `summary.html` plus one page per aspect, rebuilt in place as the work iterates (see [figures-and-reports.md](figures-and-reports.md)).
 
 Outputs land where they naturally belong: scripts in `scripts/`, their outputs in `data/` and `figures/`. QC artifacts use the `qc_` prefix (see [artifacts.md](artifacts.md)). No commit yet — outputs are uncommitted working-tree state until decide.
 
@@ -107,7 +107,7 @@ Investigate anomalies, surprises, or gaps. Each exploration question is a new re
 
 2. **Update `paper.md`:** write the synthesis for the section this milestone populates, as journal prose that drops into a manuscript as is — no internal vocabulary, file paths or process history; figures by number with captions; at evaluation, the Discussion opens with the findings table and numbered meanings. See [research-notebook.md — paper.md growth](research-notebook.md#papermd-growth-pattern).
 
-   **Build `report.html`:** rebuild the milestone report from `data/` (`scripts/build_report.py`), open it, and check its findings table against `notebook.md`. See [figures-and-reports.md](figures-and-reports.md#the-milestone-report--reporthtml).
+   **Rebuild the reports, the index and the paper:** rebuild the milestone's `reports/` from `data/` (`scripts/build_reports.py`), then from the repo root `uv run python scripts/build_report_index.py analyses/<slug>` and `uv run python scripts/build_paper.py analyses/<slug>` (it fails on a figure `paper.md` references but that doesn't exist). Open `summary.html` and check its findings table against `notebook.md`. See [figures-and-reports.md](figures-and-reports.md#milestone-reports--milestonereports-and-the-analysis-indexhtml).
 
 3. **Append to `gaps_and_friction.md`** if friction was encountered (KG issues, MCP schema mismatches, methodology gaps, anti-hallucination corrections). Two checks before moving on, both cheap:
    - **Every friction the notebook references has an entry.** If `notebook.md` says "see `gaps_and_friction.md`," the entry exists. A dangling pointer means the friction was noticed and lost.
@@ -115,7 +115,7 @@ Investigate anomalies, surprises, or gaps. Each exploration question is a new re
 
 4. **Critical review (analysis and evaluation — automatic; methods automatic when it emits a data artifact):** before presenting to the researcher, dispatch the fresh-context critic via the `critical-review` skill. It reviews **only this milestone's own files** (the proposal and earlier milestones are trusted inputs) with a lens matched to the milestone: **analysis** gets data-integrity + interpretation (the heavy gate, where computed results first appear); **evaluation** gets interpretation only (it judges whether conclusions are earned by the already-vetted analysis results); **methods** gets data-integrity + interpretation whenever it emits a data file that later milestones consume, and is on demand otherwise. Methodology compliance is not the critic's job — it lives in your decide-gate checklist. If the critic finds anything, write its findings and your disposition for each to `{MILESTONE}/critical_review.md` and resolve every Blocker (fix, or dispute with a specific data citation) before the milestone closes; if it comes back clean, add a one-line `Critical review: clean (<lens>)` to `notebook.md` and write no file. If the milestone's claims expand after the pass (explore runs after the critic by construction), re-dispatch over the delta with the already-reviewed files as trusted inputs before closing. See [GATE C](#gate-c-critical-review-before-a-claim-bearing-artifact-is-shown).
 
-5. **Present state to researcher:** point them at `report.html` first (it is how they look at the results), then show the `notebook.md` content, the `paper.md` diff, any `gaps_and_friction.md` additions, and — where the review produced findings — `critical_review.md` with your dispositions. Wait for explicit approval or redirect.
+5. **Present state to researcher:** point them at the analysis `index.html` first (it is how they look at the results), then show the `notebook.md` content, the `paper.md` diff, any `gaps_and_friction.md` additions, and — where the review produced findings — `critical_review.md` with your dispositions. Wait for explicit approval or redirect.
 
 6. **On approval, commit.** One commit, containing all of the milestone's changes.
 

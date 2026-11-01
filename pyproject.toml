@@ -16,6 +16,7 @@ dependencies = [
     "matplotlib>=3.7",
     "seaborn>=0.13",
     "openpyxl>=3.1",
+    "markdown>=3.5",
 ]
 
 # The explorer is pulled from a pinned git tag — no sibling clone needed.

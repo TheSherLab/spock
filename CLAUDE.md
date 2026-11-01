@@ -21,6 +21,8 @@ edited here).
 .env / .env.example                    # KG credentials (gitignored; copy the example)
 hooks/                                 # Usage-logging hook (writes into usage/)
 scripts/preflight.sh                   # DOA gate: version triple + KG contract + API smoke
+scripts/build_report_index.py          # analyses/<slug>/index.html: every report + the paper
+scripts/build_paper.py                 # analyses/<slug>/paper.html: paper.md with figures embedded
 analyses/                              # YOUR research output (one dir per analysis)
 usage/                                 # Usage logs (committed — ride along with your pushes)
 VERSION / CHANGELOG.md                 # Template version + history
@@ -79,8 +81,9 @@ committing. Execution (KG queries, scripts) is delegated to a coding subagent
 (`superpowers:subagent-driven-development`) that returns artifacts, not
 conclusions; the main thread owns `notebook.md` and all judgment. Use the
 `kg-coder` agent for that role and continue it across the milestone. Figures use
-the `dataviz` skill; each milestone ends with a self-contained `report.html`; and
-`paper.md` is paper-ready prose for the eventual paper's reader. See
+the `dataviz` skill; each milestone produces HTML reports (`<milestone>/reports/`,
+listed in the analysis's `index.html`); and `paper.md` is paper-ready prose for the
+eventual paper's reader, rendered with its figures as `paper.html`. See
 `.claude/skills/research-methodology/references/step-protocol.md` for commit
 timing, the decide-gate checklist, hard gates, and the delegation rules.
 
