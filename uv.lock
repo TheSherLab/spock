@@ -1225,8 +1225,8 @@ wheels = [
 
 [[package]]
 name = "multiomics-explorer"
-version = "0.1.0a5"
-source = { git = "https://github.com/wosnat/multiomics_explorer.git?tag=v0.1.0-alpha.5#2f7a138a366e659288e67c9036d75cf4ee0d54fe" }
+version = "0.1.0a6"
+source = { git = "https://github.com/wosnat/multiomics_explorer.git?tag=v0.1.0-alpha.6#7ec6190642a43d3f764996e95746988ce807cd17" }
 dependencies = [
     { name = "cyver" },
     { name = "fastmcp" },
@@ -1274,7 +1274,7 @@ requires-dist = [
     { name = "markdown", specifier = ">=3.5" },
     { name = "matplotlib", specifier = ">=3.7" },
     { name = "matplotlib-venn", specifier = ">=1.1" },
-    { name = "multiomics-explorer", git = "https://github.com/wosnat/multiomics_explorer.git?tag=v0.1.0-alpha.5" },
+    { name = "multiomics-explorer", git = "https://github.com/wosnat/multiomics_explorer.git?tag=v0.1.0-alpha.6" },
     { name = "networkx", specifier = ">=3.2" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "openpyxl", specifier = ">=3.1" },

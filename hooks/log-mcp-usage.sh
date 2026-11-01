@@ -17,9 +17,9 @@
 
 set -euo pipefail
 
-# jq is required to shape the event JSON. If it's not installed, degrade silently
-# (skip logging) rather than failing the hook on every KG call — usage logging is
-# best-effort, and a missing jq must not block analysis. See README prerequisites.
+# jq is required to shape the event JSON (README prerequisites; preflight goes RED
+# without it). If it is missing anyway, skip logging rather than failing the hook
+# on every KG call — a broken hook must not block analysis.
 command -v jq >/dev/null 2>&1 || exit 0
 
 # ${CLAUDE_PROJECT_DIR} is set by Claude Code to the repo root. Fall back to the
@@ -50,14 +50,16 @@ echo "$INPUT" | jq -c --arg tv "$TEMPLATE_VERSION" '{
   session_id: .session_id,
   tool_name: .tool_name,
   tool_input: .tool_input,
-} + (.tool_response | fromjson? // {} | {
-  response_keys: (if type == "object" then keys else null end),
-  truncated: (.truncated // null),
-  total_matching: (.total_matching // null),
-  returned: (.returned // null),
-}) + {
+} + (.tool_response | fromjson? // {} |
+  # Only an object response carries these keys; an array or scalar must not crash
+  # the hook. Read fields directly (missing → null) — `// null` would turn false into null.
+  if type == "object" then
+    {response_keys: keys, truncated: .truncated, total_matching: .total_matching, returned: .returned}
+  else
+    {response_keys: null, truncated: null, total_matching: null, returned: null}
+  end) + {
   error: (.error // null)
-}' >> "$LOG_FILE"
+}' | tr -d '\015' >> "$LOG_FILE"   # jq on Windows ends lines with CRLF; keep the log LF-only
 
 # Exit 0 = success, non-blocking
 exit 0

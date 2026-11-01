@@ -24,6 +24,27 @@ tagged. Coming from 0.1.0-alpha.2, read both sections. 0.2.0-alpha.1's
 folder-layout change (the Plan → Run arc) is the breaking one; this release only
 adds files (`reports/`, `index.html`, `paper.html`, agents).
 
+**Ships with explorer `v0.1.0-alpha.6` and KG `0.1.0-alpha.8`.** Run `uv sync`
+after pulling. The KG's `mcp_min_version` is now `0.1.0a6`, so an older explorer
+fails preflight's contract check. Scripts written against explorer alpha.5 can
+break or silently change results. The explorer's own release notes have the
+details; the changes most likely to affect an analysis are:
+- **`coculture_partner` is a list,** and it now includes culture-background
+  partners. `list_experiments(coculture_partner="Alteromonas")` returns 53
+  experiments, not 5. Add `treatment_type=['coculture']` to keep only
+  coculture-vs-axenic contrasts.
+- **TCDB fields changed.** `substrate_depth`, `tcdb_evidence_score`,
+  `min_evidence_score` with `ontology='tcdb'` and several TCDB edge columns are
+  gone, and `gene_overview.tcdb_family_count` is now `tcdb_assignment_count`.
+  Transport rows for MED4 drop from about 1,200 to 136.
+- **The Python keyword aliases from alpha.5 now raise `TypeError`.** For example,
+  `publication_doi` → `publication_dois`, `value_min` → `min_value`, and
+  `kg_release_info(conn)` → `kg_release_info(conn=conn)` (preflight itself had
+  to change).
+- **The KG content changed** (75 genome strains, 11 papers, corrected fold
+  changes, refreshed KEGG/TCDB/GO). Re-running an older analysis will not
+  reproduce its numbers.
+
 ### Added
 - **Figures follow the `dataviz` skill, and results come back as HTML pages.** A new reference, `figures-and-reports.md`, makes Claude Code's
   bundled `dataviz` skill the way every figure is made. It also fixes the
@@ -140,6 +161,15 @@ adds files (`reports/`, `index.html`, `paper.html`, agents).
   repo.
 - **`jq` is required, and preflight goes red without it.** Without `jq` the usage
   hook skips without a message, so logging was off with no sign of it.
+- **The usage log recorded wrong values or skipped calls.**
+  - `"truncated": false` was logged as `null` (jq's `false // null` is `null`), so
+    the log could never show that a result was complete.
+  - A response that was a JSON array crashed the hook, and that call went
+    unlogged.
+  - On Windows, jq ended each line with CRLF, which mixed line endings in
+    pooled logs.
+
+  All three are fixed.
 - **The anti-hallucination self-check allowed comparing fold-change magnitudes
   across studies,** contradicting the statistics reference. It now says: compare
   direction and rank across studies, magnitude only within one platform and

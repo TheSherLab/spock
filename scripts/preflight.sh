@@ -171,7 +171,7 @@ if not reachable:
     sys.exit(3)
 
 # --- KG compatibility contract (distinct hint #3: version mismatch) ---
-report = kg_release_info(conn)
+report = kg_release_info(conn=conn)
 kg = report.get("kg", {}) or {}
 kg_version = kg.get("version") or "unknown"
 verdict = report.get("verdict", "unknown")
