@@ -137,8 +137,9 @@ Three overrides apply to brainstorming here (see
 [research-notebook.md](references/research-notebook.md)): the design doc
 is `proposal.md` in the analysis folder, not `docs/superpowers/specs/`;
 the dialogue is grounded in live KG queries, not assumptions; and the
-terminal action is **begin the Run phase**, not `writing-plans`. The
-Plan phase is one commit.
+terminal action is **begin the Run phase**, not `writing-plans`. Each
+design-review round is committed; the Plan phase closes with an
+approval commit.
 
 **Review the proposal before execution.** The proposal is the
 highest-leverage artifact — a flaw propagates through all three Run
@@ -217,8 +218,12 @@ The Run phase executes the proposal across three milestones, each in
 its own named folder: **`methods/` → `analysis/` → `evaluation/`**.
 Each milestone advances through the loop **co-define → do → show →
 explore → decide** — the researcher agrees the milestone's scope at
-*co-define* (before the work) and approves at *decide* (after it). One
-commit per milestone.
+*co-define* (before the work) and approves at *decide* (after it).
+**Commit every iteration** (`<slug> <phase>: iteration — …`), and close
+each milestone with an approval commit (`… approved — …`) only after
+explicit approval. When the evaluation milestone is approved, **ask the
+researcher to push** — forks are public, so never push unasked. See
+[step-protocol.md — Commit structure](references/step-protocol.md#commit-structure).
 
 - **co-define** — before doing the work, say in plain words what you
   propose this milestone should do and why, and let the researcher

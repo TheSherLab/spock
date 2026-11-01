@@ -17,7 +17,8 @@ and `figures/` (`qc_` prefix for QC; save every figure as PNG + SVG), the
 milestone's `reports/*.html` via `scripts/build_reports.py`, then rebuild the
 index (`uv run python scripts/build_report_index.py analyses/<slug>`). You never write `notebook.md`, `paper.md`,
 `gaps_and_friction.md` or critic dispositions, and you never state what a
-result means.
+result means. You don't commit or push; the main thread commits after reading
+what you returned.
 
 **How you run code**
 - Always a script file, run with `uv run python <file>` from the repo root —

@@ -71,7 +71,7 @@ analyses/<slug>/
      proposal_notebook.md  # empty; captures grounding queries and dialogue
    ```
 3. **Run the Plan-phase brainstorming.** `proposal.md` converges (question + KG entries + enumerated framing); `proposal_notebook.md` captures the grounding queries, counts, and rejected alternatives.
-4. **At Plan-phase approval:** `paper.md`'s Question and Background sections are populated; the first git commit includes the scaffold + the proposal.
+4. **Commit as you go:** the scaffold is the first iteration commit; each design-review round is another. **At Plan-phase approval:** `paper.md`'s Question and Background sections are populated and the Plan approval commit lands (see [step-protocol.md — Commit structure](step-protocol.md#commit-structure)).
 
 Run-milestone folders (`methods/`, `analysis/`, `evaluation/`) are created **progressively** — each folder (and its `scripts/` / `data/` / `figures/` subfolders as needed) is created when that milestone begins, not pre-created at scaffold time. This avoids empty folders cluttering the analysis during work in progress.
 
@@ -112,7 +112,7 @@ Scripts must be:
 ## paper.md and gaps_and_friction.md
 
 Both live at the analysis root. Content rules are in [research-notebook.md](research-notebook.md):
-- `paper.md` — paper-ready writeup for the eventual paper's reader (no internal vocabulary or file paths), skeleton sections from day 1, populated at the Plan commit and each milestone's decide phase
+- `paper.md` — paper-ready writeup for the eventual paper's reader (no internal vocabulary or file paths), skeleton sections from day 1, populated during the Plan phase and each milestone's decide phase
 - `gaps_and_friction.md` — transitional friction log, distinct from decisions (which live in milestone notebooks or `proposal.md`)
 
 ## Data and figure conventions

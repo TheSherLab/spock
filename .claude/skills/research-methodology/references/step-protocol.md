@@ -6,16 +6,32 @@ The **just-in-time formalization** principle applies throughout: terms, metrics,
 
 ## Commit structure
 
-**One commit for the Plan phase, then one commit per Run milestone** (methods, analysis, evaluation). Each commit includes everything the phase/milestone produced:
+**Commit every iteration; mark approval with its own commit.** Work changes many times inside a phase — proposal revisions after each design-review round, each round of do / explore, each critic pass and its dispositions, each rebuild of the reports. Each of those is committed, so git holds every version the researcher saw, not only the approved one. Reports and notebooks are rebuilt or overwritten in place; the commits are what keep their history.
 
-**Plan commit:**
+Two kinds of commit, told apart by the message:
+
+| Commit | When | Message |
+|---|---|---|
+| **Iteration** | after every round that changed files — before presenting it to the researcher | `<slug> <phase>: iteration — <what changed, one line>` |
+| **Approval** | at decide, only after the researcher's explicit approval (GATE E) | `<slug> <phase>: approved — <advance rationale>` |
+
+`<phase>` is `plan`, `methods`, `analysis` or `evaluation`. Example: `2026-11-03-n_release methods: iteration — tier rule v3, bin samples for Medium`.
+
+- **The main thread commits**, never the coding subagent — it has just read the files and owns what the round means.
+- **Commit everything the round produced**, including `usage/` logs, rebuilt `reports/`, `index.html` and `paper.html`. Leave nothing modified across a researcher hand-off.
+- **Never amend or squash** an iteration commit; a wrong turn stays in history as the record of what was tried.
+- **Iteration commits are not approval.** Only an `approved` commit closes a phase; GATE B and GATE E are about that commit.
+
+The **approval commit** of each phase must leave the tree holding everything the phase produced:
+
+**Plan approval commit:**
 - `proposal.md` (question + KG entries + enumerated framing)
 - `proposal_notebook.md` (the brainstorming record: KG-grounding queries, counts, rejected alternatives)
 - `proposal_critical_review.md` where the proposal critic found something
 - the scaffold (analysis folder, `paper.md` skeleton, `gaps_and_friction.md` header) — see [artifacts.md](artifacts.md)
 - `paper.md` Question + Background sections populated
 
-**Run milestone commit:**
+**Run milestone approval commit:**
 - `notebook.md` (narrative + decide-gate checklist)
 - `scripts/`, `data/`, `figures/` (main + `qc_*` files)
 - `reports/` (the milestone's HTML reports, rebuilt from `data/`), plus the regenerated `index.html` and `paper.html` at the analysis root
@@ -23,11 +39,13 @@ The **just-in-time formalization** principle applies throughout: terms, metrics,
 - updates to `gaps_and_friction.md` (if the milestone encountered friction)
 - `critical_review.md` where the critic found something (analysis + evaluation milestones; methods when it emits a data artifact; any delta pass)
 
-No mid-milestone commits. The decide phase is the atomic milestone boundary.
+The decide phase is still the milestone boundary: the approval commit is what the next milestone builds on.
+
+**When the analysis is done, request a push.** After the evaluation milestone's approval commit, ask the researcher to push — don't push unasked, because forks are public (see the README). Show what will go: the branch, the commits not yet on the remote (`git log --oneline @{u}..` or, with no upstream yet, the whole branch), and a reminder that the analysis and its usage logs become public. Push only on a yes; if the researcher declines or wants to hold it back (unpublished work), say so in the evaluation `notebook.md`. The researcher may also ask to push after any approval commit — same request, same check.
 
 ## The Plan phase
 
-The Plan phase is one grounded `superpowers:brainstorming` conversation (three overrides — see [research-notebook.md — Using brainstorming for the Plan phase](research-notebook.md)). The output is `proposal.md` plus its brainstorming record, committed once.
+The Plan phase is one grounded `superpowers:brainstorming` conversation (three overrides — see [research-notebook.md — Using brainstorming for the Plan phase](research-notebook.md)). The output is `proposal.md` plus its brainstorming record: committed after each design-review round, and closed by the Plan approval commit.
 
 **Framing is enumerated.** The proposal's framing states, concretely: hypothesis; approach (how and why, not code); a deliberate statistics decision (the specific test and thresholds, or an explicit reasoned "none"); a named validation set (the genes/pathways whose behavior is already known, with the behavior expected if the method works); a falsifiability check (the result that would say the method found nothing real, plus a pre-registered expected-negative class that should *not* score); and design comparability (per experiment: its role, what each arm is compared against and that reference's physiological state, whether contrasts share samples or a fitted model, and what it can and cannot confirm — asking the researcher for culture states the KG doesn't hold). See [research-notebook.md](research-notebook.md#just-in-time-formalization) for the floor. The proposal also says what the result is for (standalone, or part of a paper) and whose hypothesis it is.
 
@@ -38,11 +56,11 @@ The Plan phase is one grounded `superpowers:brainstorming` conversation (three o
 1. **Self-review** — read `proposal.md` with fresh eyes: is the framing enumerated (stats decision actually made, validation set named and checkable, falsifiability check + expected-negative named, a design-comparability row per experiment)? any vagueness, placeholder, or internal contradiction? Fix inline. This is the direct catch for the vague-plan-that-forces-a-redo failure.
 2. **Critical review (automatic; interpretation only)** — dispatch the fresh-context critic via the `critical-review` skill over `proposal.md`. There is no data yet, so the lens is interpretation only (testability, controls, confounders, whether the statistics decision, validation set, and expected-negative fit the question). Findings + dispositions go to `proposal_critical_review.md`; a clean review is a one-line note in `proposal_notebook.md`. Resolve every Blocker before proceeding. See [GATE C](#gate-c-critical-review-before-a-claim-bearing-artifact-is-shown).
 3. **Design review with the researcher** — this is where the researcher's design thinking happens, so expect changes rather than a sign-off. Present a **short list of the open design choices** (what is compared, how the set is defined, which controls, what is deferred), each with your recommendation and the critic's findings that bear on it; `proposal.md` and the `paper.md` Question + Background are there to read, not the thing presented. Fold in the researcher's changes.
-4. **Delta critic pass after changes** — if the design review changed the framing (it usually does), re-dispatch the critic over what changed, with the already-reviewed proposal as a trusted input. Repeat 3–4 until the researcher approves with no further design change. Only then does the Plan commit land and the Run phase begin. *(N-import coculture: four approval prompts in a row were answered with design input, growing the proposal from 205 to 330 lines; two scoped delta passes caught one Blocker and five Concerns in the additions.)*
+4. **Delta critic pass after changes** — if the design review changed the framing (it usually does), re-dispatch the critic over what changed, with the already-reviewed proposal as a trusted input. Repeat 3–4 until the researcher approves with no further design change. Only then does the Plan approval commit land and the Run phase begin. *(N-import coculture: four approval prompts in a row were answered with design input, growing the proposal from 205 to 330 lines; two scoped delta passes caught one Blocker and five Concerns in the additions.)*
 
 ## Before starting a Run milestone
 
-- The Plan commit exists, `proposal.md` is populated
+- The Plan approval commit exists, `proposal.md` is populated
 - The previous milestone's commit exists (for analysis and evaluation)
 - The previous milestone's `notebook.md` has the decide-gate checklist populated and its `paper.md` section written
 
@@ -117,9 +135,11 @@ Investigate anomalies, surprises, or gaps. Each exploration question is a new re
 
 5. **Present state to researcher:** point them at the analysis `index.html` first (it is how they look at the results), then show the `notebook.md` content, the `paper.md` diff, any `gaps_and_friction.md` additions, and — where the review produced findings — `critical_review.md` with your dispositions. Wait for explicit approval or redirect.
 
-6. **On approval, commit.** One commit, containing all of the milestone's changes.
+6. **On approval, make the approval commit** (`<slug> <milestone>: approved — …`), containing whatever the last iteration commit didn't. Changes after a redirect are iteration commits; only explicit approval earns the `approved` message.
 
-7. Begin the next milestone (create its folder as needed — see [artifacts.md](artifacts.md)).
+7. **At the evaluation milestone, request the push** (see [Commit structure](#commit-structure)).
+
+8. Begin the next milestone (create its folder as needed — see [artifacts.md](artifacts.md)).
 
 ## Redo path
 
@@ -127,7 +147,7 @@ When the researcher says "redo the analysis milestone with X" (or any milestone)
 
 1. **do:** update script or approach; rerun; regenerate outputs. New artifacts overwrite old in the milestone folder.
 2. **show / explore:** new tables, figures, Results; update Surprises if changed.
-3. **decide:** new decide-gate checklist, new `paper.md` synthesis, new `gaps_and_friction.md` entry if the redo surfaced friction. **New commit (never amend the previous).**
+3. **decide:** new decide-gate checklist, new `paper.md` synthesis, new `gaps_and_friction.md` entry if the redo surfaced friction. **Iteration commits, then a new approval commit (never amend the previous).**
 
 The previous commit remains in git history as the record of what was tried. The working-tree `notebook.md` is overwritten because it now describes what actually happened in the successful attempt — it is not a log of prior attempts.
 
@@ -151,7 +171,7 @@ The first dogfood analysis executed an internal plan and surfaced finished work 
 
 Early analyses partially wrote notebooks retroactively — exploration reasoning was lost and couldn't be verified against the actual data state at the time.
 
-**Do not start milestone N+1 until milestone N is committed, including `notebook.md`, `paper.md` updates, and `gaps_and_friction.md` updates if applicable.** Likewise, do not start the Run phase until the Plan commit exists.
+**Do not start milestone N+1 until milestone N's approval commit exists, including `notebook.md`, `paper.md` updates, and `gaps_and_friction.md` updates if applicable.** Likewise, do not start the Run phase until the Plan approval commit exists.
 
 ### GATE C: Critical review before a claim-bearing artifact is shown
 
@@ -173,7 +193,7 @@ Summary tables shown in chat must also appear as markdown tables in `notebook.md
 
 Scope drift (decisions added mid-execution) slips past when there is no atomic gate between "I finished some work" and "I'm advancing." The decide phase presents state to the researcher; the researcher approves, requests a redo, or redirects.
 
-**Do not commit a milestone without explicit researcher approval of the decide-gate state.**
+**Do not make a milestone's `approved` commit without explicit researcher approval of the decide-gate state.** Iteration commits need no approval — they record work, they don't close it.
 
 ## Git discipline
 
@@ -189,8 +209,8 @@ Everything else tracked by default. Explicit entries with a comment explaining w
 
 ### Scaffolding
 
-Scaffolding and the Plan phase land in the same commit. Claude creates the scaffold during the Plan phase, before the brainstorming dialogue begins (see [artifacts.md — Scaffold creation](artifacts.md)). No separate scaffolding commit.
+Claude creates the scaffold at the start of the Plan phase, before the brainstorming dialogue begins (see [artifacts.md — Scaffold creation](artifacts.md)), and commits it as the first iteration commit (`<slug> plan: iteration — scaffold`).
 
 ### Redo commits
 
-Redo produces new commits, not amendments. The failed attempt's commit stays in history. Within the working tree, the milestone's `notebook.md` is overwritten to reflect the successful attempt.
+Redo produces new commits — iterations, then a new approval commit — never amendments. The failed attempt's commits stay in history. Within the working tree, the milestone's `notebook.md` is overwritten to reflect the successful attempt.

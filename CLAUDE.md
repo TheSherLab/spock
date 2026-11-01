@@ -47,7 +47,7 @@ plan is committed means retrofitting.
 Every analysis is two phases:
 
 **Plan** — one grounded `superpowers:brainstorming` conversation converging on
-`proposal.md` (one commit):
+`proposal.md` (committed each design-review round; closed by an approval commit):
 - **Question** — user prompt + clarifying questions → locked question
 - **KG entries** — relevant publications, experiments, organisms, data types,
   enumerated from the KG
@@ -60,7 +60,8 @@ Every analysis is two phases:
 - The Plan closes on a **design review** with the researcher (open choices, each
   with a recommendation), followed by a delta critic pass over what changed
 
-**Run** — three milestones, each in its own folder, one commit each:
+**Run** — three milestones, each in its own folder; every iteration committed, each
+milestone closed by an approval commit, and a push requested when the analysis is done:
 - **methods** — ad-hoc Python module implementing the approach the proposal
   committed to; toy-tested (`superpowers:test-driven-development`)
 - **analysis** — run the method; produce scored outputs, figures, tables

@@ -144,8 +144,10 @@ Open a new Claude chat and ask your research question. The `research-methodology
 skill loads automatically and guides the work through a two-phase arc: a **Plan**
 phase (question → KG entries → enumerated framing, converged into `proposal.md`)
 and a **Run** phase (methods → analysis → evaluation). Everything Claude produces
-is saved under `analyses/` in **your** copy. Commit the `usage/` logs alongside
-your analysis commits (they help improve the tools).
+is saved under `analyses/` in **your** copy. Claude commits every iteration as it
+goes (with the `usage/` logs, which help improve the tools), marks each step you
+approve with an *approved* commit, and asks you to **push** when the analysis is
+done. Say no if the work must stay private for now; your fork is public.
 
 What you get back at each step:
 - **`index.html`** at the analysis root — open it in a browser: it links every

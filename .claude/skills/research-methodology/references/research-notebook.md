@@ -96,7 +96,7 @@ A milestone's `notebook.md` represents what-we-now-believe-happened in that mile
 
 ## paper.md growth pattern
 
-Single `paper.md` at the analysis root. **It is written for the reader of the eventual paper, not for the team that ran the analysis**: each section must drop into a manuscript as is — its Methods into a Methods section, its Results into Results — with nothing to strip out first. Skeleton sections exist from day 1 (seeded by Claude during scaffolding at the start of the Plan phase) and fill in as the analysis advances — during the Plan commit and each Run milestone's **decide** phase, after the notebook is finalized but before the commit.
+Single `paper.md` at the analysis root. **It is written for the reader of the eventual paper, not for the team that ran the analysis**: each section must drop into a manuscript as is — its Methods into a Methods section, its Results into Results — with nothing to strip out first. Skeleton sections exist from day 1 (seeded by Claude during scaffolding at the start of the Plan phase) and fill in as the analysis advances — during the Plan phase and each Run milestone's **decide** phase, after the notebook is finalized but before the commit.
 
 **`paper.md` is journal prose. The process record lives elsewhere.** The notebooks, `proposal.md`, critic files and `gaps_and_friction.md` carry the how-we-got-here; `paper.md` carries only what a reader of the paper needs:
 - **No internal vocabulary** — no milestone names, decide gates, step labels, critic findings, version numbers of the module, or labels like "E7" or "tier B" unless defined in the text as they would be in a paper.

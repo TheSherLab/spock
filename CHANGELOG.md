@@ -91,6 +91,15 @@ adds files (`reports/`, `index.html`, `paper.html`, agents).
   meanings, with caveats in their own section. Last time the conclusion that had
   absorbed every critic caveat was rejected as unreadable, and a separate
   manuscript had to be written at the end.
+- **Every iteration is committed; approval gets its own commit; a push is
+  requested at the end.** "One commit per phase" is replaced by an iteration
+  commit after every round that changes files (each design-review round, do /
+  explore round, critic pass, report rebuild), made by the main thread before
+  the researcher looks. An `approved` commit closes each phase, only on
+  explicit approval. Reports and notebooks are rebuilt in place, so the commits
+  are what keep every version the researcher saw. When the evaluation milestone
+  is approved, Claude asks the researcher to push, showing what will go public,
+  and pushes only on a yes.
 - **`gaps_and_friction.md` records what worked, not only what went wrong.**
   Entries carry a type tag (`[pitfall]`, `[bkm]`, `[kg-gap]`, `[tool]`,
   `[method-gap]`) so logs from many analyses can be pooled into best-known
