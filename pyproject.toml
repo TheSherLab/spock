@@ -24,7 +24,7 @@ dependencies = [
     "networkx>=3.2",
     "matplotlib-venn>=1.1",
     "adjusttext>=1.1",
-    "biopython>=1.83",
+    "biopython>=1.83,<1.87",  # 1.87+ has no Intel-Mac wheels
 ]
 
 # The explorer is pulled from a pinned git tag — no sibling clone needed.

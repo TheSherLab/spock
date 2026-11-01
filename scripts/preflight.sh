@@ -4,7 +4,7 @@
 # Produces ONE green/red answer after checking, in order:
 #   0. Staleness   — offline tag compare vs the template remote (informational).
 #   0.5 Plugin     — the required `superpowers` plugin is enabled for THIS repo (RED if not).
-#   0.6 jq         — usage logging needs jq; warns (not RED) if missing.
+#   0.6 jq         — required by the usage logger (RED if missing).
 #   1. Triple      — template / explorer / KG versions, printed on one line.
 #   2. Contract    — kg_release_info: installed explorer satisfies KG.mcp_min_version,
 #                    the load-bearing schema shape is present, and the KG's
@@ -85,13 +85,14 @@ else
   yellow "   Ensure it is installed: claude plugin install superpowers@claude-plugins-official"
 fi
 
-# ── 0.6 Usage logging needs jq (the hook skips silently without it, by design) ──
-# Not a RED: analysis works without it. But a silent skip means no usage logs,
-# which the workshop relies on, so say so loudly.
+# ── 0.6 jq is required: the usage hook needs it, and skips silently without it ──
+# Usage logs are part of every analysis commit (they feed the methodology work),
+# so a missing jq is RED rather than a quiet gap in the record.
 if ! command -v jq >/dev/null 2>&1; then
-  yellow "⚠ jq not found — MCP usage logging is OFF (hooks/log-mcp-usage.sh skips without it)."
-  yellow "   Windows: winget install jqlang.jq   ·   macOS: brew install jq   ·   Linux: apt install jq"
-  yellow "   Then restart your terminal (and Claude Code) so jq is on PATH."
+  red "✗ jq not found — MCP usage logging would be OFF (hooks/log-mcp-usage.sh needs it)."
+  yellow "   Windows: winget install jqlang.jq   ·   macOS: brew install jq   ·   Linux: sudo apt install jq"
+  yellow "   Then close and reopen VS Code and the terminal so jq is on PATH, and re-run preflight."
+  exit 1
 fi
 
 # ── 1–3. Version triple + KG contract + API smoke (Python, via the synced venv) ──

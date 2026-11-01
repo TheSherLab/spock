@@ -122,7 +122,15 @@ adds files (`reports/`, `index.html`, `paper.html`, agents).
   - `biopython`.
 
   The Python guide lists them by task. `upsetplot` was tried and left out: it
-  crashes on its first plot under pandas 3.
+  crashes on its first plot under pandas 3. biopython is capped below 1.87,
+  the last release with Intel-Mac packages.
+- **Python is pinned to 3.12** (`.python-version`). `uv` installs it if it's
+  missing. Every dependency has prebuilt packages for 3.12 on Windows, macOS
+  (Intel and Apple Silicon) and Linux, so nothing has to be compiled.
+- **The README install list is complete and required.** It adds git with Git
+  Bash on Windows (preflight and the usage logger are bash scripts), `jq`, a
+  Claude account, and a GitHub login on the machine for the end-of-analysis
+  push. It gives a one-line install command for Windows, macOS and Linux.
 
 ### Fixed
 - **Preflight could pass with `superpowers` missing from this clone.**
@@ -130,8 +138,8 @@ adds files (`reports/`, `index.html`, `paper.html`, agents).
   without `jq` the check matched any of them. It now parses the list with the
   venv's Python and accepts only a user-scoped install or one scoped to this
   repo.
-- **Preflight now warns when `jq` is missing.** Without `jq` the usage hook skips
-  without a message, so logging was off with no sign of it.
+- **`jq` is required, and preflight goes red without it.** Without `jq` the usage
+  hook skips without a message, so logging was off with no sign of it.
 - **The anti-hallucination self-check allowed comparing fold-change magnitudes
   across studies,** contradicting the statistics reference. It now says: compare
   direction and rank across studies, magnitude only within one platform and

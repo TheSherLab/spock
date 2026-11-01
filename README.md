@@ -53,15 +53,27 @@ identities aren't guessed, and statistics are done properly.
 
 ### Install these first
 
-You need the following installed once. The links go to official install
-instructions for Mac, Windows, and Linux:
+You need all of the following, installed once. None is optional: preflight
+checks for them and goes red if one is missing.
 
 - **[VS Code](https://code.visualstudio.com/)** — the editor everything runs in
-- **[Claude Code](https://claude.com/claude-code)** — the AI assistant (added to VS Code). Keep it current (`claude update`); the `dataviz` skill the figures rely on ships with Claude Code itself
-- **[git](https://git-scm.com/downloads)** — tracks and downloads your work
-- **[uv](https://docs.astral.sh/uv/)** — installs Python 3.11+ and the analysis tools for you
-- A free **[GitHub account](https://github.com/signup)** — to fork the template
-- **[jq](https://jqlang.github.io/jq/)** *(recommended)* — needed for usage logging; without it, logging is skipped (preflight warns). Windows: `winget install jqlang.jq`, then restart VS Code
+- **[Claude Code](https://claude.com/claude-code)** — the AI assistant (added to VS Code), plus a **Claude account** with Claude Code access to sign in with. Keep it current (`claude update`): the `dataviz` skill the figures rely on ships with Claude Code itself
+- **[git](https://git-scm.com/downloads)** — tracks your work. **On Windows this must be Git for Windows**, which also installs **Git Bash**: the preflight check and the usage logger are bash scripts, so run them from a Git Bash terminal
+- **[uv](https://docs.astral.sh/uv/)** — installs Python (3.12, pinned by the repo) and the analysis tools for you
+- **[jq](https://jqlang.github.io/jq/)** — used by the usage logger; without it no usage is recorded
+- A free **[GitHub account](https://github.com/signup)** — to fork the template, and **signed in on this computer** so you can push your work at the end of an analysis. On Windows and Mac, git asks you to sign in through the browser the first time you push
+
+Quickest way to install the command-line tools (then install Claude Code from its link above):
+
+| OS | Command |
+|---|---|
+| **Windows** (PowerShell) | `winget install Microsoft.VisualStudioCode Git.Git astral-sh.uv jqlang.jq` |
+| **macOS** ([Homebrew](https://brew.sh)) | `brew install git uv jq` and `brew install --cask visual-studio-code` |
+| **Linux** (Debian/Ubuntu) | `sudo apt install git jq`, then `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+
+Close and reopen VS Code (and any terminal) afterwards, so the new tools are on your PATH.
+On Windows, set VS Code's terminal to Git Bash: **Terminal → New Terminal**, then the
+**˅** next to **+** → **Git Bash** (or *Select Default Profile* → **Git Bash** to make it stick).
 
 > **New to the command line?** The steps below are commands you paste into a
 > terminal. VS Code has one built in: **View → Terminal**. Open this folder in
