@@ -1,4 +1,4 @@
-# Multi-omics research template (alpha)
+# Spock — multi-omics research template (alpha)
 
 A ready-to-use starting point for doing computational research on the lab's
 multi-omics **knowledge graph** — without writing database queries or analysis
@@ -53,15 +53,27 @@ identities aren't guessed, and statistics are done properly.
 
 ### Install these first
 
-You need the following installed once. The links go to official install
-instructions for Mac, Windows, and Linux:
+You need all of the following, installed once. None is optional: preflight
+checks for them and goes red if one is missing.
 
 - **[VS Code](https://code.visualstudio.com/)** — the editor everything runs in
-- **[Claude Code](https://claude.com/claude-code)** — the AI assistant (added to VS Code)
-- **[git](https://git-scm.com/downloads)** — tracks and downloads your work
-- **[uv](https://docs.astral.sh/uv/)** — installs Python 3.11+ and the analysis tools for you
-- A free **[GitHub account](https://github.com/signup)** — to fork the template
-- **[jq](https://jqlang.github.io/jq/)** *(optional)* — only needed for usage logging; without it, logging is silently skipped
+- **[Claude Code](https://claude.com/claude-code)** — the AI assistant (added to VS Code), plus a **Claude account** with Claude Code access to sign in with. Keep it current (`claude update`): the `dataviz` skill the figures rely on ships with Claude Code itself
+- **[git](https://git-scm.com/downloads)** — tracks your work. **On Windows this must be Git for Windows**, which also installs **Git Bash**: the preflight check and the usage logger are bash scripts, so run them from a Git Bash terminal
+- **[uv](https://docs.astral.sh/uv/)** — installs Python (3.12, pinned by the repo) and the analysis tools for you
+- **[jq](https://jqlang.github.io/jq/)** — used by the usage logger; without it no usage is recorded
+- A free **[GitHub account](https://github.com/signup)** — to fork the template, and **signed in on this computer** so you can push your work at the end of an analysis. On Windows and Mac, git asks you to sign in through the browser the first time you push
+
+Quickest way to install the command-line tools (then install Claude Code from its link above):
+
+| OS | Command |
+|---|---|
+| **Windows** (PowerShell) | `winget install Microsoft.VisualStudioCode Git.Git astral-sh.uv jqlang.jq --accept-source-agreements --accept-package-agreements` — one command for all four. If an older winget rejects several names, run `winget install <name>` once per package |
+| **macOS** ([Homebrew](https://brew.sh)) | `brew install git uv jq` and `brew install --cask visual-studio-code` |
+| **Linux** (Debian/Ubuntu) | `sudo apt install git jq`, then `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+
+Close and reopen VS Code (and any terminal) afterwards, so the new tools are on your PATH.
+On Windows, set VS Code's terminal to Git Bash: **Terminal → New Terminal**, then the
+**˅** next to **+** → **Git Bash** (or *Select Default Profile* → **Git Bash** to make it stick).
 
 > **New to the command line?** The steps below are commands you paste into a
 > terminal. VS Code has one built in: **View → Terminal**. Open this folder in
@@ -73,14 +85,14 @@ guide** (canonically `multiomics_biocypher_kg/docs/kg_mcp_guide.md`).
 
 ### 1. Fork, clone & install
 
-Fork this repo on GitHub first (the **Fork** button, top-right of the repo
-page). Then, in a terminal:
+Fork [TheSherLab/spock](https://github.com/TheSherLab/spock) on GitHub first
+(the **Fork** button, top-right of the repo page). Then, in a terminal:
 
 ```bash
 # Replace <your-fork-url> with the URL of YOUR fork (green "Code" button on your fork):
 git clone <your-fork-url>
-cd multiomics_research_template   # the folder git clone just made — matches your fork's name if you renamed it
-git remote add upstream https://github.com/wosnat/multiomics_research_template.git   # lets you pull updates later
+cd spock                      # the folder git clone just made — matches your fork's name if you renamed it
+git remote add upstream https://github.com/TheSherLab/spock.git   # lets you pull updates later
 uv sync                       # installs the explorer tools + analysis libraries
 ```
 
@@ -117,7 +129,7 @@ works identically on Linux, Windows 11, and Remote-SSH.
 
 Open this folder in VS Code. When prompted, **trust the workspace** — this lets
 the research skills load, the MCP server start, and the required **`superpowers`**
-plugin install (the methodology's step-1 brainstorming depends on it; it's declared
+plugin install (the methodology's Plan-phase brainstorming depends on it; it's declared
 in `.claude/settings.json` and pulled from the official Anthropic marketplace on
 trust). Confirm the `multiomics-kg` server shows as connected by running `/mcp` in
 a Claude chat.
@@ -141,10 +153,28 @@ the lab subnet, or a version mismatch. Fix it before starting a research chat.
 ### 5. Start an analysis
 
 Open a new Claude chat and ask your research question. The `research-methodology`
-skill loads automatically and guides the work through a 6-step flow (question →
-KG data → framing → methods → analysis → evaluation). Everything Claude produces
-is saved under `analyses/` in **your** copy. Commit the `usage/` logs alongside
-your analysis commits (they help improve the tools).
+skill loads automatically and guides the work through a two-phase arc: a **Plan**
+phase (question → KG entries → enumerated framing, converged into `proposal.md`)
+and a **Run** phase (methods → analysis → evaluation). Everything Claude produces
+is saved under `analyses/` in **your** copy. Claude commits every iteration as it
+goes (with the `usage/` logs, which help improve the tools), marks each step you
+approve with an *approved* commit, and asks you to **push** when the analysis is
+done. Say no if the work must stay private for now; your fork is public.
+
+What you get back at each step:
+- **`index.html`** at the analysis root — open it in a browser: it links every
+  report (figures you can hover over, tables you can sort and filter) and the
+  paper draft. Bookmark it; it is the one page to open.
+- **`paper.md`** at the analysis root — written as paper text you can drop into a
+  manuscript's Methods, Results and Discussion. **`paper.html`** is the same text
+  with figures and tables in place; Print → Save as PDF from your browser for a PDF.
+- **`gaps_and_friction.md`** — what went wrong and what worked. Please keep it
+  honest: it is the evidence for improving the method.
+
+> **Fewer permission prompts (optional).** Claude Code's *auto* permission mode
+> lets it run routine commands without asking each time. It is set per user, not
+> per repo: check your mode with `/status`, and see the Claude Code docs on
+> permission modes before turning it on.
 
 ---
 
@@ -156,6 +186,16 @@ git pull upstream main && uv sync     # preflight warns you when you're behind
 
 The pull brings new skills and a possibly-updated explorer version; `uv sync`
 installs it. Preflight verifies the two match.
+
+**If the pull stops with a conflict in `pyproject.toml` / `uv.lock`** (it will if
+you added a package yourself, e.g. with `uv add`): in `pyproject.toml`, keep
+**both** lists of dependencies (delete only the `<<<<<<<`, `=======` and
+`>>>>>>>` marker lines), then regenerate the lock file instead of merging it:
+
+```bash
+git checkout --theirs uv.lock && uv lock && uv sync
+git add pyproject.toml uv.lock && git commit --no-edit
+```
 
 ---
 

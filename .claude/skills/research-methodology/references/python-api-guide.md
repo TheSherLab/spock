@@ -26,6 +26,34 @@ For **which** interface to use (browse in MCP vs extract in Python), see
   template model; the explorer lives in your venv.
 - **Neo4j must be reachable** — same connection as the MCP server,
   configured via the gitignored `.env` at the repo root (see the README).
+- **Write code to a script file, then run it.** Inline shell heredocs and long
+  `python -c "..."` strings break on quoting as soon as they carry prose,
+  apostrophes or `$` — repeatedly, in both dogfoods. A file in `scripts/` also
+  leaves the record Rule 5 needs.
+- **Pass `encoding="utf-8"` to every `open()` / `read_text()` / `to_csv()`.**
+  Windows defaults to cp1252, which corrupts gene product names and crashes on
+  arrows and Greek letters. When running a bundled tool with `python -I`, add
+  `-X utf8` (`-I` ignores `PYTHONUTF8`).
+- **Use what the venv already has** before writing your own:
+
+  | Need | Library |
+  |---|---|
+  | tables, stats, models | `pandas`, `numpy`, `scipy`, `statsmodels`, `scikit-learn` |
+  | Excel supplements | `pd.read_excel` — `.xlsx` via `openpyxl`, old `.xls` via `xlrd` |
+  | large tables | Parquet via `pyarrow` (`to_parquet` / `read_parquet`) |
+  | markdown tables for notebooks | `df.to_markdown(index=False)` (`tabulate`) |
+  | static figures | `matplotlib`, `seaborn`; `adjustText` for non-overlapping gene labels; `matplotlib-venn` for 2–3-set overlaps |
+  | HTML reports | `jinja2` templates; `df.style.to_html()` |
+  | networks | `networkx` (ortholog groups, pathway graphs) |
+  | sequences | `biopython` (`Bio.Seq`, `Bio.SeqIO` for FASTA) |
+  | toy tests (methods milestone) | `pytest` — `uv run python -m pytest -q <milestone>/tests` |
+
+  For overlaps of more than three gene sets, draw an intersection-size bar chart
+  with matplotlib (`upsetplot` is not installed: it breaks under pandas 3).
+- **A missing package is a dependency gap, not a workaround.** If a script needs
+  something the venv lacks (e.g. `openpyxl` for Excel supplements), log it in
+  `gaps_and_friction.md` as `[tool]` and add it with `uv add`, rather than
+  installing into a different interpreter.
 
 ## MCP tools and Python API functions are the same code
 
