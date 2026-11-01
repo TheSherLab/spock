@@ -24,6 +24,14 @@ tagged. Coming from 0.1.0-alpha.2, read both sections. 0.2.0-alpha.1's
 folder-layout change (the Plan → Run arc) is the breaking one; this release only
 adds files (`reports/`, `index.html`, `paper.html`, agents).
 
+**The template moved and is now called Spock:**
+[TheSherLab/spock](https://github.com/TheSherLab/spock) (previously
+`wosnat/multiomics_research_template`). GitHub redirects the old URL. Existing
+clones should repoint anyway:
+`git remote set-url upstream https://github.com/TheSherLab/spock.git` (or
+`origin`, if you cloned the template directly). The project name in
+`pyproject.toml` is now `spock`.
+
 **Ships with explorer `v0.1.0-alpha.6` and KG `0.1.0-alpha.8`.** Run `uv sync`
 after pulling. The KG's `mcp_min_version` is now `0.1.0a6`, so an older explorer
 fails preflight's contract check. Scripts written against explorer alpha.5 can

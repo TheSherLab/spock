@@ -28,7 +28,7 @@ green() { printf '\033[32m%s\033[0m\n' "$1"; }
 red() { printf '\033[31m%s\033[0m\n' "$1"; }
 yellow() { printf '\033[33m%s\033[0m\n' "$1"; }
 
-bold "── Preflight: multiomics_research_template ──"
+bold "── Preflight: spock (multiomics research template) ──"
 
 # ── 0. Staleness check (offline tag compare; no auth, works on the lab subnet) ──
 LOCAL_VER="$(tr -d '[:space:]' < VERSION 2>/dev/null || echo unknown)"

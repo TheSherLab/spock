@@ -1,5 +1,5 @@
 [project]
-name = "multiomics-research-template"
+name = "spock"
 # Canonical version lives in the top-level VERSION file (read by preflight + the
 # usage hook). This mirror is the PEP 440 form of VERSION (0.2.0-alpha.2 → 0.2.0a2);
 # keep it in sync on release.

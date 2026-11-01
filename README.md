@@ -1,4 +1,4 @@
-# Multi-omics research template (alpha)
+# Spock — multi-omics research template (alpha)
 
 A ready-to-use starting point for doing computational research on the lab's
 multi-omics **knowledge graph** — without writing database queries or analysis
@@ -85,14 +85,14 @@ guide** (canonically `multiomics_biocypher_kg/docs/kg_mcp_guide.md`).
 
 ### 1. Fork, clone & install
 
-Fork this repo on GitHub first (the **Fork** button, top-right of the repo
-page). Then, in a terminal:
+Fork [TheSherLab/spock](https://github.com/TheSherLab/spock) on GitHub first
+(the **Fork** button, top-right of the repo page). Then, in a terminal:
 
 ```bash
 # Replace <your-fork-url> with the URL of YOUR fork (green "Code" button on your fork):
 git clone <your-fork-url>
-cd multiomics_research_template   # the folder git clone just made — matches your fork's name if you renamed it
-git remote add upstream https://github.com/wosnat/multiomics_research_template.git   # lets you pull updates later
+cd spock                      # the folder git clone just made — matches your fork's name if you renamed it
+git remote add upstream https://github.com/TheSherLab/spock.git   # lets you pull updates later
 uv sync                       # installs the explorer tools + analysis libraries
 ```
 

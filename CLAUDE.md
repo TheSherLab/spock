@@ -2,7 +2,8 @@
 
 ## What this repo is
 
-Your working copy of the **multiomics research template** — a clean starting
+Your working copy of **Spock**, the multiomics research template
+([TheSherLab/spock](https://github.com/TheSherLab/spock)) — a clean starting
 point for KG-backed research in Claude Code. It carries the research skills and
 the MCP wiring; `uv sync` pulls the explorer tools into the local venv. Your
 analyses live in `analyses/` in this clone.
